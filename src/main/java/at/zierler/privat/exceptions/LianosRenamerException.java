@@ -1,4 +1,4 @@
-package at.zierler.privat;
+package at.zierler.privat.exceptions;
 
 /**
  * Created by florian on 2/8/16.

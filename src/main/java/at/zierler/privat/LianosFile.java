@@ -1,5 +1,7 @@
 package at.zierler.privat;
 
+import at.zierler.privat.exceptions.LianosRenamerException;
+
 import java.io.File;
 
 /**
@@ -18,7 +20,7 @@ public class LianosFile extends File {
         File file = new File(path);
         if(file.exists()) {
             if (file.isFile()) {
-                return FileType.File;
+                return FileType.SingleFile;
             } else if (file.isDirectory()) {
                 return FileType.Folder;
             } else {
@@ -28,6 +30,22 @@ public class LianosFile extends File {
         else{
             return FileType.NonExistent;
         }
+    }
+
+    public void handle(){
+        switch (this.getType()){
+            case SingleFile: handleSingleFile(); break;
+            case Folder: handleFolder(); break;
+            case NonExistent: System.out.println(this.getAbsolutePath() + " is not a file.");
+        }
+    }
+
+    private void handleFolder() {
+        System.out.println("Folder: " + this.getAbsolutePath());
+    }
+
+    private void handleSingleFile() {
+        System.out.println("File: "+ this.getAbsolutePath());
     }
 
     public FileType getType() {

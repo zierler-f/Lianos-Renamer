@@ -78,3 +78,6 @@ crashlytics-build.properties
 .Trash-*
 
 # Created by .ignore support plugin (hsz.mobi)
+
+# Restest folder for testing #
+restest

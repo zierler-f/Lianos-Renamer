@@ -1,5 +1,7 @@
 package at.zierler.privat;
 
+import at.zierler.privat.exceptions.LianosRenamerException;
+
 /**
  * Created by florian on 2/8/16.
  */
@@ -12,7 +14,7 @@ public class Main {
         }
         for(String arg:args){
             LianosFile f = new LianosFile(arg);
-            System.out.println(f.getType());
+            f.handle();
         }
     }
 }
