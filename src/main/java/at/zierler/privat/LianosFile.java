@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
  */
 public class LianosFile extends File {
 
-    private FileType type;
+    private final FileType type;
 
     public LianosFile(String pathname) throws LianosRenamerException {
         super(pathname);
-        this.type = getFileTypeByPath(pathname);
+        this.type = getFileTypeByPath(pathname); //Set type according to getFileTypeByPath() automatically. SingleFile, Folder or NonExistent are possible outcomes.
     }
 
     private FileType getFileTypeByPath(String path) throws LianosRenamerException {
@@ -30,7 +30,7 @@ public class LianosFile extends File {
             }
         }
         else{
-            return FileType.NonExistent;
+            return FileType.NonExistent; //Used to print an error later
         }
     }
 
@@ -48,19 +48,21 @@ public class LianosFile extends File {
     }
 
     private void handleSingleFile() {
-        String allowedFiletypes = ".*.mkv|.*.mp4|.*.flv|.*.avi|.*.wmv";
-        String filename = this.getName();
-        if(filename.matches(allowedFiletypes)){
-            System.out.println(filename);
-            String patternStr = "s[0-9]{1,3}e[0-9]{1,3}|[0-9]{1,3}x[0-9]{1,3}";
-            Pattern pattern = Pattern.compile(patternStr);
-            Matcher matcher = pattern.matcher(filename);
-            if(matcher.find()){
-                System.out.println(filename.substring(matcher.start(),matcher.end()));
+        String allowedFiletypes = ".*.mkv|.*.mp4|.*.flv|.*.avi|.*.wmv"; //Regex for possible video file-types.
+        if(getName().matches(allowedFiletypes)){
+            System.out.println("Now processing " + getAbsolutePath());
+            Pattern seasonEpisodePattern = Pattern.compile("(?i)s[0-9]{1,3}.*(?i)e[0-9]{1,3}|[0-9]{1,3}(?i)X[0-9]{1,3}"); //Find either s<Number> e<Number> or <Number>x<Number> in filename. Case doesn't matter here.
+            Matcher seasonEpisodeMatcher = seasonEpisodePattern.matcher(getName());
+            if(seasonEpisodeMatcher.find()){ //Depends on if the matcher got a result or not.
+                String seasonEpisodeContainer = getName().substring(seasonEpisodeMatcher.start(),seasonEpisodeMatcher.end());
+                System.out.println(seasonEpisodeContainer);
+            }
+            else{
+                System.out.println(getAbsolutePath() + " did not contain information about episode and/or season number.");
             }
         }
         else{
-            System.out.println(this.getAbsolutePath() + " is not a video-file.");
+            System.out.println(getAbsolutePath() + " is not a video-file.");
         }
     }
 
