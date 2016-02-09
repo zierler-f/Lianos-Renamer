@@ -3,6 +3,8 @@ package at.zierler.privat;
 import at.zierler.privat.exceptions.LianosRenamerException;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by florian on 2/8/16.
@@ -32,11 +34,12 @@ public class LianosFile extends File {
         }
     }
 
-    public void handle(){
+    public void handle() throws LianosRenamerException {
         switch (this.getType()){
             case SingleFile: handleSingleFile(); break;
             case Folder: handleFolder(); break;
-            case NonExistent: System.out.println(this.getAbsolutePath() + " is not a file.");
+            case NonExistent: System.out.println(this.getAbsolutePath() + " is not a file."); break;
+            default: throw new LianosRenamerException("Unexpected Error. File Type not found.");
         }
     }
 
@@ -45,7 +48,20 @@ public class LianosFile extends File {
     }
 
     private void handleSingleFile() {
-        System.out.println("File: "+ this.getAbsolutePath());
+        String allowedFiletypes = ".*.mkv|.*.mp4|.*.flv|.*.avi|.*.wmv";
+        String filename = this.getName();
+        if(filename.matches(allowedFiletypes)){
+            System.out.println(filename);
+            String patternStr = "s[0-9]{1,3}e[0-9]{1,3}|[0-9]{1,3}x[0-9]{1,3}";
+            Pattern pattern = Pattern.compile(patternStr);
+            Matcher matcher = pattern.matcher(filename);
+            if(matcher.find()){
+                System.out.println(filename.substring(matcher.start(),matcher.end()));
+            }
+        }
+        else{
+            System.out.println(this.getAbsolutePath() + " is not a video-file.");
+        }
     }
 
     public FileType getType() {

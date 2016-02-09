@@ -7,7 +7,7 @@ import at.zierler.privat.exceptions.LianosRenamerException;
  */
 public class Main {
     public static void main(String[] args) throws LianosRenamerException {
-        System.out.println("Welcome to Lianos Renamer!");
+        System.out.println("[>>> - [[[ Welcome to Lianos Renamer ]]] - <<<]");
         if (args.length == 0){
             System.out.println("No files found to rename.");
             return;
