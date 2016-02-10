@@ -95,7 +95,13 @@ public class LianosFile extends File {
                     throw new LianosRenamerException("Unexpected Error. Season and/or episode number didn't match any pattern.");
                 }
                 Episode episode = new Episode(seriesName,seasonNumber,episodeNumber);
-                System.out.println(episode.toString());
+                System.out.println("Found episode title '" + episode.getEpisodeTitle() + "' for " + getAbsolutePath());
+                String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber());
+                String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber());
+                String fileExtension = getName().substring(getName().lastIndexOf('.'),getName().length());
+
+                File newFile = new File(getParentFile().getAbsolutePath()+"/"+episode.getSeriesName()+" - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " + episode.getEpisodeTitle() + fileExtension);
+                this.renameTo(newFile);
             }
             else{
                 System.out.println(getAbsolutePath() + " did not contain information about episode and/or season number.");
