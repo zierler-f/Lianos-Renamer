@@ -21,11 +21,13 @@ public class Episode {
     private int seasonNumber;
     private int episodeNumber;
     private String episodeTitle;
+    private FileHandler handler;
 
-    public Episode(String seriesName, int seasonNumber, int episodeNumber) throws LianosRenamerException {
+    public Episode(String seriesName, int seasonNumber, int episodeNumber, FileHandler handler) throws LianosRenamerException {
         this.seriesName = seriesName;
         this.seasonNumber = seasonNumber;
         this.episodeNumber = episodeNumber;
+        this.handler = handler;
         this.episodeTitle = downloadEpisodeTitle();
     }
 
@@ -34,12 +36,22 @@ public class Episode {
         JSONArray resultArray = new JSONArray(sendGetRequest(urlString));
         int showId = -1;
         switch (resultArray.length()){
-            case 0:  return null;
-            case 1:  showId = resultArray.getJSONObject(0).getJSONObject("show").getInt("id");
-                     setSeriesName(resultArray.getJSONObject(0).getJSONObject("show").getString("name")); break;
-            default: int numberInArray = userChooseSeries(resultArray);
-                     showId = resultArray.getJSONObject(numberInArray).getJSONObject("show").getInt("id");
-                     setSeriesName(resultArray.getJSONObject(numberInArray).getJSONObject("show").getString("name")); break;
+            case 0:
+                return null;
+            case 1:
+                showId = resultArray.getJSONObject(0).getJSONObject("show").getInt("id");
+                setSeriesName(resultArray.getJSONObject(0).getJSONObject("show").getString("name")); break;
+            default:
+                int numberInArray;
+                if(handler.getCurFolderAnswer() == -1){
+                    numberInArray = userChooseSeries(resultArray);
+                }
+                else{
+                    numberInArray = handler.getCurFolderAnswer();
+                }
+                showId = resultArray.getJSONObject(numberInArray).getJSONObject("show").getInt("id");
+                setSeriesName(resultArray.getJSONObject(numberInArray).getJSONObject("show").getString("name"));
+                handler.setCurFolderAnswer(numberInArray); break;
         }
         urlString = "http://api.tvmaze.com/shows/" + showId +"/episodebynumber?season=" + getSeasonNumber() + "&number=" + getEpisodeNumber();
         JSONObject resultObject = new JSONObject(sendGetRequest(urlString));

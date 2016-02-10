@@ -14,7 +14,8 @@ public class Main {
         }
         for(String arg:args){
             LianosFile f = new LianosFile(arg);
-            f.handle();
+            FileHandler fh = new FileHandler();
+            fh.handle(f);
         }
         System.exit(0);
     }
