@@ -53,8 +53,9 @@ public class LianosFile extends File {
         String allowedFiletypes = ".*.mkv|.*.mp4|.*.flv|.*.avi|.*.wmv"; //Regex for possible video file-types.
         if(getName().matches(allowedFiletypes)){
             System.out.println("Now processing " + getAbsolutePath());
-            HashMap<String,Integer> seasonEpisodeContainer = new HashMap<String, Integer>();
             String seriesName;
+            int seasonNumber = -1;
+            int episodeNumber = -1;
 
             String seasonXEpisodePattern = "[0-9]{1,3}(?i)x[0-9]{1,3}";
             String sSeasonPattern = "(?i)s[0-9]{1,3}";
@@ -66,14 +67,14 @@ public class LianosFile extends File {
             if(seasonEpisodeMatcher.find()){ //Depends on if the matcher got a result or not.
                 String seasonEpisodeContainerString = getName().substring(seasonEpisodeMatcher.start(),seasonEpisodeMatcher.end());
                 String seriesNameContainerString = getName().substring(0,seasonEpisodeMatcher.start());
-                seriesNameContainerString = seriesNameContainerString.replaceAll("[^A-Za-z ]","").trim();
+                seriesNameContainerString = seriesNameContainerString.replaceAll("[^A-Za-z ]"," ").trim();
                 seriesNameContainerString = seriesNameContainerString.replaceAll(" ","-").toLowerCase();
                 seriesName = seriesNameContainerString;
 
                 if(seasonEpisodeContainerString.matches(seasonXEpisodePattern)){ //Check if season and episode are like <number>x<number>
                     String[] splitSE = seasonEpisodeContainerString.split("(?i)x");
-                    seasonEpisodeContainer.put("Season",Integer.parseInt(splitSE[0])); //Add Season to Hashmap by taking first value of splitSE.
-                    seasonEpisodeContainer.put("Episode",Integer.parseInt(splitSE[1])); //Add Episode to Hashmap by taking second value of splitSE.
+                    seasonNumber = Integer.parseInt(splitSE[0]); //Set Season Number by taking first value of splitSE.
+                    episodeNumber= Integer.parseInt(splitSE[1]); //Set Episode Number by taking second value of splitSE.
                 }
                 else if(seasonEpisodeContainerString.matches(sSeasonEEpisodePattern)){ //Check if season and episode are like s<number>*e<number
                     Matcher seasonMatcher = Pattern.compile(sSeasonPattern).matcher(seasonEpisodeContainerString);
@@ -83,8 +84,8 @@ public class LianosFile extends File {
                         String[] splitS = seasonEpisodeContainerString.substring(seasonMatcher.start(),seasonMatcher.end()).split("(?i)s");
                         String[] splitE = seasonEpisodeContainerString.substring(episodeMatcher.start(),episodeMatcher.end()).split("(?i)e");
 
-                        seasonEpisodeContainer.put("Season",Integer.parseInt(splitS[1])); //Add Season to Hashmap by taking second value of splitS.
-                        seasonEpisodeContainer.put("Episode",Integer.parseInt(splitE[1])); //Add Episode to Hashmap by taking second value of splitS.
+                        seasonNumber = Integer.parseInt(splitS[1]); //Set Season Number by taking second value of splitS.
+                        episodeNumber = Integer.parseInt(splitE[1]); //Set Episode Number by taking second value of splitS.
                     }
                     else{
                         throw new LianosRenamerException("Unexpected Error. Season or episode number not found.");
@@ -93,8 +94,8 @@ public class LianosFile extends File {
                 else{
                     throw new LianosRenamerException("Unexpected Error. Season and/or episode number didn't match any pattern.");
                 }
-                System.out.println(seriesName);
-                System.out.println(seasonEpisodeContainer.get("Season") + " " + seasonEpisodeContainer.get("Episode"));
+                Episode episode = new Episode(seriesName,seasonNumber,episodeNumber);
+                System.out.println(episode.toString());
             }
             else{
                 System.out.println(getAbsolutePath() + " did not contain information about episode and/or season number.");
