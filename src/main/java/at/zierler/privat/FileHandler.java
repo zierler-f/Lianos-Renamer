@@ -54,7 +54,7 @@ public class FileHandler {
                 String seriesNameContainerString = file.getName().substring(0,seasonEpisodeMatcher.start());
 
                 seriesNameContainerString = seriesNameContainerString.replaceAll("[^A-Za-z ]"," ").trim();
-                seriesNameContainerString = seriesNameContainerString.replaceAll(" and ",""); //TVMaze doesn't work with 'and' in the request
+                seriesNameContainerString = seriesNameContainerString.replaceAll(" and",""); //TVMaze doesn't work with 'and' in the request
                 seriesName = seriesNameContainerString.replaceAll(" ","-").toLowerCase();
 
                 if(seasonEpisodeContainerString.matches(seasonXEpisodePattern)){ //Check if season and episode are like <number>x<number>
