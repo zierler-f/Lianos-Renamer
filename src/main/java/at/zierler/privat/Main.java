@@ -16,5 +16,6 @@ public class Main {
             LianosFile f = new LianosFile(arg);
             f.handle();
         }
+        System.exit(0);
     }
 }

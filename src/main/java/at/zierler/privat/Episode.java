@@ -34,15 +34,12 @@ public class Episode {
         JSONArray resultArray = new JSONArray(sendGetRequest(urlString));
         int showId = -1;
         switch (resultArray.length()){
-            case 0:  System.out.println("No shows found.");
+            case 0:  return null;
             case 1:  showId = resultArray.getJSONObject(0).getJSONObject("show").getInt("id");
                      setSeriesName(resultArray.getJSONObject(0).getJSONObject("show").getString("name")); break;
             default: int numberInArray = userChooseSeries(resultArray);
                      showId = resultArray.getJSONObject(numberInArray).getJSONObject("show").getInt("id");
                      setSeriesName(resultArray.getJSONObject(numberInArray).getJSONObject("show").getString("name")); break;
-        }
-        if(showId == -1){
-            return "";
         }
         urlString = "http://api.tvmaze.com/shows/" + showId +"/episodebynumber?season=" + getSeasonNumber() + "&number=" + getEpisodeNumber();
         JSONObject resultObject = new JSONObject(sendGetRequest(urlString));
@@ -70,17 +67,22 @@ public class Episode {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line;
-            String s = "";
+            String result = "";
 
             while ((line = br.readLine()) != null) {
-                s += line;
+                result += line;
             }
 
             br.close();
-            return s;
+            return result;
         } catch (IOException e) {
             throw new LianosRenamerException("Unexpected Error. " + e.getMessage());
         }
+    }
+
+    @Override
+    public String toString(){
+        return "Series Name: " + getSeriesName() + "\t" + "Season: " + getSeasonNumber() + "\t" + "Episode: " + getEpisodeNumber() + "Episode Title: " +getEpisodeTitle();
     }
 
     public String getSeriesName() {
@@ -101,22 +103,5 @@ public class Episode {
 
     public void setSeriesName(String seriesName){
         this.seriesName = seriesName;
-    }
-
-    @Override
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("Series Name: ");
-        sb.append(getSeriesName());
-        sb.append("\n");
-        sb.append("Season: ");
-        sb.append(getSeasonNumber());
-        sb.append("\n");
-        sb.append("Episode: ");
-        sb.append(getEpisodeNumber());
-        sb.append("\n");
-        sb.append("Episode Title: ");
-        sb.append(getEpisodeTitle());
-        return sb.toString();
     }
 }

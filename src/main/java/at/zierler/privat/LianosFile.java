@@ -3,8 +3,6 @@ package at.zierler.privat;
 import at.zierler.privat.exceptions.LianosRenamerException;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,8 +12,6 @@ import java.util.regex.Pattern;
 public class LianosFile extends File {
 
     private final FileType type;
-    private Episode episode;
-    private String seriesNameCache;
 
     public LianosFile(String pathname) throws LianosRenamerException {
         super(pathname);
@@ -28,7 +24,6 @@ public class LianosFile extends File {
             if (file.isFile()) {
                 return FileType.SingleFile;
             } else if (file.isDirectory()) {
-                episode = null;
                 return FileType.Folder;
             } else {
                 throw new LianosRenamerException("Unexpected Error. Path exists but is neither a file nor a folder.");
@@ -63,25 +58,28 @@ public class LianosFile extends File {
             int seasonNumber = -1;
             int episodeNumber = -1;
 
-            String seasonXEpisodePattern = "[0-9]{1,3}(?i)x[0-9]{1,3}";
-            String sSeasonPattern = "(?i)s[0-9]{1,3}";
-            String eEpisodePattern = "(?i)e[0-9]{1,3}";
-            String sSeasonEEpisodePattern = sSeasonPattern + ".*" + eEpisodePattern;
+            String seasonXEpisodePattern = "[0-9]{1,3}(?i)x[0-9]{1,3}"; //Pattern for files which contain season and episode like <Season-Number>x<Episode-Number>
+            String sSeasonPattern = "(?i)s[0-9]{1,3}"; //Pattern for files which contain season like s<Season-Number>
+            String eEpisodePattern = "(?i)e[0-9]{1,3}"; //Pattern for files which contain episode like e<Episode-Number>
+            String sSeasonEEpisodePattern = sSeasonPattern + ".*" + eEpisodePattern; //Pattern for files which contain season and episode like s<Season-Number>...e<Episode-Number>
 
-            Pattern seasonEpisodePattern = Pattern.compile(seasonXEpisodePattern + "|" + sSeasonEEpisodePattern); //Find either s<Number>*e<Number> or <Number>x<Number> in filename. Case doesn't matter here.
+            Pattern seasonEpisodePattern = Pattern.compile(seasonXEpisodePattern + "|" + sSeasonEEpisodePattern); //Compiled Pattern using both Pattern-Strings from above.
             Matcher seasonEpisodeMatcher = seasonEpisodePattern.matcher(getName());
+
             if(seasonEpisodeMatcher.find()){ //Depends on if the matcher got a result or not.
                 String seasonEpisodeContainerString = getName().substring(seasonEpisodeMatcher.start(),seasonEpisodeMatcher.end());
                 String seriesNameContainerString = getName().substring(0,seasonEpisodeMatcher.start());
+
                 seriesNameContainerString = seriesNameContainerString.replaceAll("[^A-Za-z ]"," ").trim();
-                seriesNameContainerString = seriesNameContainerString.replaceAll(" ","-").toLowerCase();
-                seriesName = seriesNameContainerString;
+                seriesNameContainerString = seriesNameContainerString.replaceAll(" and ",""); //TVMaze doesn't work with 'and' in the request
+                seriesName = seriesNameContainerString.replaceAll(" ","-").toLowerCase();
 
                 if(seasonEpisodeContainerString.matches(seasonXEpisodePattern)){ //Check if season and episode are like <number>x<number>
                     String[] splitSE = seasonEpisodeContainerString.split("(?i)x");
                     seasonNumber = Integer.parseInt(splitSE[0]); //Set Season Number by taking first value of splitSE.
                     episodeNumber= Integer.parseInt(splitSE[1]); //Set Episode Number by taking second value of splitSE.
                 }
+
                 else if(seasonEpisodeContainerString.matches(sSeasonEEpisodePattern)){ //Check if season and episode are like s<number>*e<number
                     Matcher seasonMatcher = Pattern.compile(sSeasonPattern).matcher(seasonEpisodeContainerString);
                     Matcher episodeMatcher = Pattern.compile(eEpisodePattern).matcher(seasonEpisodeContainerString);
@@ -93,22 +91,36 @@ public class LianosFile extends File {
                         seasonNumber = Integer.parseInt(splitS[1]); //Set Season Number by taking second value of splitS.
                         episodeNumber = Integer.parseInt(splitE[1]); //Set Episode Number by taking second value of splitS.
                     }
+
                     else{
                         throw new LianosRenamerException("Unexpected Error. Season or episode number not found.");
                     }
                 }
+
                 else{
                     throw new LianosRenamerException("Unexpected Error. Season and/or episode number didn't match any pattern.");
                 }
-                episode = new Episode(seriesName,seasonNumber,episodeNumber);
-                System.out.println("Found episode title '" + episode.getEpisodeTitle() + "' for " + getAbsolutePath());
-                String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber());
-                String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber());
-                String fileExtension = getName().substring(getName().lastIndexOf('.'),getName().length());
 
-                File newFile = new File(getParentFile().getAbsolutePath()+"/"+episode.getSeriesName()+" - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " + episode.getEpisodeTitle() + fileExtension);
-                this.renameTo(newFile);
-                System.out.println("\033[0;1m" + "Finished processing " + newFile.getAbsolutePath() + "\033[0;0m");
+                Episode episode = new Episode(seriesName,seasonNumber,episodeNumber);
+
+                if(episode.getEpisodeTitle() == null){
+                    System.out.println("No episode title found for " + episode.getSeriesName() + " Season " + episode.getSeasonNumber() + " Episode " + episode.getEpisodeNumber());
+                    return;
+                }
+                else{
+                    System.out.println("Found episode title '" + episode.getEpisodeTitle() + "' for " + getAbsolutePath());
+
+                    String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber());
+                    String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber());
+
+                    String fileExtension = getName().substring(getName().lastIndexOf('.'),getName().length());
+
+                    File newFile = new File(getParentFile().getAbsolutePath()+"/"+episode.getSeriesName()+" - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " + episode.getEpisodeTitle() + fileExtension);
+
+                    this.renameTo(newFile);
+
+                    System.out.println("\033[0;1m" + "Finished processing " + newFile.getAbsolutePath() + "\033[0;0m");
+                }
             }
             else{
                 System.out.println(getAbsolutePath() + " did not contain information about episode and/or season number.");
