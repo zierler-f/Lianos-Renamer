@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 public class LianosFile extends File {
 
     private final FileType type;
+    private Episode episode;
+    private String seriesNameCache;
 
     public LianosFile(String pathname) throws LianosRenamerException {
         super(pathname);
@@ -26,6 +28,7 @@ public class LianosFile extends File {
             if (file.isFile()) {
                 return FileType.SingleFile;
             } else if (file.isDirectory()) {
+                episode = null;
                 return FileType.Folder;
             } else {
                 throw new LianosRenamerException("Unexpected Error. Path exists but is neither a file nor a folder.");
@@ -45,8 +48,11 @@ public class LianosFile extends File {
         }
     }
 
-    private void handleFolder() {
-        System.out.println("Folder: " + this.getAbsolutePath());
+    private void handleFolder() throws LianosRenamerException {
+        for(File file:this.listFiles()){
+            LianosFile lFile = new LianosFile(file.getAbsolutePath());
+            lFile.handle();
+        }
     }
 
     private void handleSingleFile() throws LianosRenamerException {
@@ -94,7 +100,7 @@ public class LianosFile extends File {
                 else{
                     throw new LianosRenamerException("Unexpected Error. Season and/or episode number didn't match any pattern.");
                 }
-                Episode episode = new Episode(seriesName,seasonNumber,episodeNumber);
+                episode = new Episode(seriesName,seasonNumber,episodeNumber);
                 System.out.println("Found episode title '" + episode.getEpisodeTitle() + "' for " + getAbsolutePath());
                 String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber());
                 String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber());
@@ -102,6 +108,7 @@ public class LianosFile extends File {
 
                 File newFile = new File(getParentFile().getAbsolutePath()+"/"+episode.getSeriesName()+" - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " + episode.getEpisodeTitle() + fileExtension);
                 this.renameTo(newFile);
+                System.out.println("\033[0;1m" + "Finished processing " + newFile.getAbsolutePath() + "\033[0;0m");
             }
             else{
                 System.out.println(getAbsolutePath() + " did not contain information about episode and/or season number.");

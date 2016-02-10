@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Scanner;
 
 /**
  * Created by florian on 2/10/16.
@@ -33,10 +34,12 @@ public class Episode {
         JSONArray resultArray = new JSONArray(sendGetRequest(urlString));
         int showId = -1;
         switch (resultArray.length()){
-            case 0: System.out.println("No Series with a name like " + getSeriesName() + " found."); break;
-            case 1: showId = resultArray.getJSONObject(0).getJSONObject("show").getInt("id");
-                    setSeriesName(resultArray.getJSONObject(0).getJSONObject("show").getString("name")); break;
-            default: System.out.println("More than one shows found."); break;
+            case 0:  System.out.println("No shows found.");
+            case 1:  showId = resultArray.getJSONObject(0).getJSONObject("show").getInt("id");
+                     setSeriesName(resultArray.getJSONObject(0).getJSONObject("show").getString("name")); break;
+            default: int numberInArray = userChooseSeries(resultArray);
+                     showId = resultArray.getJSONObject(numberInArray).getJSONObject("show").getInt("id");
+                     setSeriesName(resultArray.getJSONObject(numberInArray).getJSONObject("show").getString("name")); break;
         }
         if(showId == -1){
             return "";
@@ -44,6 +47,17 @@ public class Episode {
         urlString = "http://api.tvmaze.com/shows/" + showId +"/episodebynumber?season=" + getSeasonNumber() + "&number=" + getEpisodeNumber();
         JSONObject resultObject = new JSONObject(sendGetRequest(urlString));
         return resultObject.getString("name");
+    }
+
+    private int userChooseSeries(JSONArray series){
+        System.out.println("Please choose a Series be selecting number next to it:");
+        for(int i = 0; i<series.length(); i++){
+            System.out.println("[" + (i+1) + "] " + series.getJSONObject(i).getJSONObject("show").getString("name"));
+        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Number: ");
+        int n = scanner.nextInt();
+        return n-1;
     }
 
     public String sendGetRequest(String urlString) throws LianosRenamerException {
