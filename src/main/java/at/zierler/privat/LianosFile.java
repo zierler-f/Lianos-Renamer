@@ -32,6 +32,15 @@ public class LianosFile extends File {
         }
     }
 
+    public String getFileExtension(){
+        if(getName().lastIndexOf(".") != -1 && getName().lastIndexOf(".") != 0) {
+            return getName().substring(getName().lastIndexOf(".") + 1);
+        }
+        else{
+            return "";
+        }
+    }
+
     public FileType getType() {
         return type;
     }

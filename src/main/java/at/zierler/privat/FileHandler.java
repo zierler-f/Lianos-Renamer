@@ -34,7 +34,7 @@ public class FileHandler {
     }
 
     private void handleSingleFile(LianosFile file) throws LianosRenamerException {
-        String allowedFiletypes = ".*.mkv|.*.mp4|.*.flv|.*.avi|.*.wmv"; //Regex for possible video file-types.
+        String allowedFiletypes = ".*\\.mkv|.*\\.mp4|.*\\.flv|.*\\.avi|.*\\.wmv"; //Regex for possible video file-types.
         if(file.getName().matches(allowedFiletypes)){
             System.out.println("Now processing " + file.getAbsolutePath());
             String seriesName;
@@ -93,14 +93,14 @@ public class FileHandler {
                 else{
                     System.out.println("Found episode title '" + episode.getEpisodeTitle() + "' for " + file.getAbsolutePath());
 
-                    String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber());
-                    String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber());
+                    String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber()); //Format Season number to have 2 digits
+                    String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber()); // Format Episdoe number to have 2 digits
 
-                    String fileExtension = file.getName().substring(file.getName().lastIndexOf('.'),file.getName().length());
+                    File newFile = new File(file.getParentFile().getAbsolutePath()+"/"+episode.getSeriesName() +
+                            " - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " +
+                            episode.getEpisodeTitle() + "." + "mkv");
 
-                    File newFile = new File(file.getParentFile().getAbsolutePath()+"/"+episode.getSeriesName()+" - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " + episode.getEpisodeTitle() + fileExtension);
-
-                    file.renameTo(newFile);
+                    file.renameTo(newFile); //Renaming to new name
 
                     System.out.println("\033[0;1m" + "Finished processing " + newFile.getAbsolutePath() + "\033[0;0m");
                 }

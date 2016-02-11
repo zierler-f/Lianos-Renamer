@@ -33,7 +33,7 @@ public class Episode {
 
     private String downloadEpisodeTitle() throws LianosRenamerException {
         String urlString = "http://api.tvmaze.com/search/shows?q=" + getSeriesName();
-        String resultString = sendGetRequest(urlString);
+        String resultString = sendGetRequest(urlString); //Get results from TVMaze
         if(resultString == null){
             return null;
         }

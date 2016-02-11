@@ -79,5 +79,7 @@ crashlytics-build.properties
 
 # Created by .ignore support plugin (hsz.mobi)
 
-# Restest folder for testing #
+### Other
+
+## Restest folder for testing
 restest
