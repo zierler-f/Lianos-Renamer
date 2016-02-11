@@ -96,9 +96,13 @@ public class FileHandler {
                     String seasonStringFormatted = String.format("%02d", episode.getSeasonNumber()); //Format Season number to have 2 digits
                     String episodeStringFormatted = String.format("%02d", episode.getEpisodeNumber()); // Format Episdoe number to have 2 digits
 
-                    File newFile = new File(file.getParentFile().getAbsolutePath()+"/"+episode.getSeriesName() +
-                            " - S" + seasonStringFormatted + "E" + episodeStringFormatted + " - " +
-                            episode.getEpisodeTitle() + "." + "mkv");
+                    String newFileName = episode.getSeriesName() +
+                            " - S" + seasonStringFormatted +
+                            "E" + episodeStringFormatted + " - " +
+                            episode.getEpisodeTitle() +
+                            "." + file.getFileExtension();
+
+                    File newFile = new File(file.getParentFile(),newFileName);
 
                     file.renameTo(newFile); //Renaming to new name
 
