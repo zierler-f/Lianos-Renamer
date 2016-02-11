@@ -3,8 +3,6 @@ package at.zierler.privat;
 import at.zierler.privat.exceptions.LianosRenamerException;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by florian on 2/8/16.
