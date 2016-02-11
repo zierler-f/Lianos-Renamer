@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -33,7 +34,11 @@ public class Episode {
 
     private String downloadEpisodeTitle() throws LianosRenamerException {
         String urlString = "http://api.tvmaze.com/search/shows?q=" + getSeriesName();
-        JSONArray resultArray = new JSONArray(sendGetRequest(urlString));
+        String resultString = sendGetRequest(urlString);
+        if(resultString == null){
+            return null;
+        }
+        JSONArray resultArray = new JSONArray(resultString);
         int showId = -1;
         switch (resultArray.length()){
             case 0:
@@ -54,7 +59,11 @@ public class Episode {
                 handler.setCurFolderAnswer(numberInArray); break;
         }
         urlString = "http://api.tvmaze.com/shows/" + showId +"/episodebynumber?season=" + getSeasonNumber() + "&number=" + getEpisodeNumber();
-        JSONObject resultObject = new JSONObject(sendGetRequest(urlString));
+        resultString = sendGetRequest(urlString);
+        if(resultString == null){
+            return null;
+        }
+        JSONObject resultObject = new JSONObject(resultString);
         return resultObject.getString("name");
     }
 
@@ -65,7 +74,17 @@ public class Episode {
         }
         Scanner scanner = new Scanner(System.in);
         System.out.print("Number: ");
-        int n = scanner.nextInt();
+        int n = -1;
+        try{
+            n = scanner.nextInt();
+            if(n > series.length() || n < 1){
+                throw new InputMismatchException();
+            }
+        }
+        catch(InputMismatchException e){
+            System.out.println("Invalid input. Please use a number between 1 and " + series.length() + "." );
+            return userChooseSeries(series);
+        }
         return n-1;
     }
 
@@ -88,7 +107,8 @@ public class Episode {
             br.close();
             return result;
         } catch (IOException e) {
-            throw new LianosRenamerException("Unexpected Error. " + e.getMessage());
+            System.out.println("Season " + getSeasonNumber() + " Episode " + getEpisodeNumber() + " doesn't exist for " + getSeriesName() + ".");
+            return null;
         }
     }
 
