@@ -3,6 +3,7 @@ package at.zierler.privat;
 import at.zierler.privat.exceptions.LianosRenamerException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,28 +13,31 @@ import java.util.regex.Pattern;
 public class FileHandler {
 
     private int curFolderAnswer;
+    private ArrayList<LianosFile> fileList;
 
     public FileHandler(){
         setCurFolderAnswer(-1);
+        fileList = new ArrayList<LianosFile>();
     }
 
-    public void handle(LianosFile file) throws LianosRenamerException {
+    public ArrayList<LianosFile> handle(LianosFile file) throws LianosRenamerException {
         switch (file.getType()){
-            case SingleFile: handleSingleFile(file); break;
+            case SingleFile: fileList.add(handleSingleFile(file)); break;
             case Folder: handleFolder(file); break;
             case NonExistent: System.out.println(file.getAbsolutePath() + " is not a file."); break;
             default: throw new LianosRenamerException("Unexpected Error. File Type not found.");
         }
+        return fileList;
     }
 
     private void handleFolder(LianosFile folder) throws LianosRenamerException {
         this.curFolderAnswer = -1;
         for(File curFile:folder.listFiles()){
-            handle(new LianosFile(curFile.getAbsolutePath()));
+            handle(new LianosFile(curFile));
         }
     }
 
-    private void handleSingleFile(LianosFile file) throws LianosRenamerException {
+    private LianosFile handleSingleFile(LianosFile file) throws LianosRenamerException {
         String allowedFiletypes = ".*\\.mkv|.*\\.mp4|.*\\.flv|.*\\.avi|.*\\.wmv"; //Regex for possible video file-types.
         if(file.getName().matches(allowedFiletypes)){
             System.out.println("Now processing " + file.getAbsolutePath());
@@ -88,7 +92,6 @@ public class FileHandler {
 
                 if(episode.getEpisodeTitle() == null){
                     System.out.println("No episode title found for " + episode.getSeriesName() + " Season " + episode.getSeasonNumber() + " Episode " + episode.getEpisodeNumber());
-                    return;
                 }
                 else{
                     System.out.println("Found episode title '" + episode.getEpisodeTitle() + "' for " + file.getAbsolutePath());
@@ -102,11 +105,12 @@ public class FileHandler {
                             episode.getEpisodeTitle() +
                             "." + file.getFileExtension();
 
-                    File newFile = new File(file.getParentFile(),newFileName);
+                    LianosFile newFile = new LianosFile(new File(file.getParentFile(),newFileName),file);
 
                     file.renameTo(newFile); //Renaming to new name
 
                     System.out.println("\033[0;1m" + "Finished processing " + newFile.getAbsolutePath() + "\033[0;0m");
+                    return newFile;
                 }
             }
             else{
@@ -116,6 +120,7 @@ public class FileHandler {
         else{
             System.out.println(file.getAbsolutePath() + " is not a video-file.");
         }
+        return file;
     }
 
     public int getCurFolderAnswer() {
