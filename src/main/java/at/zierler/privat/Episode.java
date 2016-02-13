@@ -69,7 +69,8 @@ public class Episode {
     private int userChooseSeries(JSONArray series){
         System.out.println("Please choose a Series be selecting number next to it:");
         for(int i = 0; i<series.length(); i++){
-            System.out.println("[" + (i+1) + "] " + series.getJSONObject(i).getJSONObject("show").getString("name"));
+            int yearPremiered = Integer.parseInt((series.getJSONObject(i).getJSONObject("show").getString("premiered").split("-"))[0]);
+            System.out.println("[" + (i+1) + "] " + series.getJSONObject(i).getJSONObject("show").getString("name") + " (" + yearPremiered + ")");
         }
         Scanner scanner = new Scanner(System.in);
         System.out.print("Number: ");
