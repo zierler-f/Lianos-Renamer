@@ -3,6 +3,7 @@ package at.zierler.privat;
 import at.zierler.privat.exceptions.LianosRenamerException;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by florian on 2/8/16.
@@ -10,25 +11,37 @@ import java.io.File;
 public class LianosFile extends File {
 
     private final FileType type;
+    private final LianosFile originalFile;
 
-    public LianosFile(String pathname) throws LianosRenamerException {
+    public LianosFile(String pathname){
         super(pathname);
         this.type = getFileTypeByPath(pathname); //Set type according to getFileTypeByPath() automatically. SingleFile, Folder or NonExistent are possible outcomes.
+        this.originalFile = this;
     }
 
-    private FileType getFileTypeByPath(String path) throws LianosRenamerException {
+    public LianosFile(File file){
+        super(file.getAbsolutePath());
+        this.type = getFileTypeByPath(file.getAbsolutePath()); //Set type according to getFileTypeByPath() automatically. SingleFile, Folder or NonExistent are possible outcomes.
+        this.originalFile = this;
+    }
+
+    public LianosFile(File file, LianosFile originalFile){
+        super(file.getAbsolutePath());
+        this.type = getFileTypeByPath(file.getAbsolutePath()); //Set type according to getFileTypeByPath() automatically. SingleFile, Folder or NonExistent are possible outcomes.
+        this.originalFile = originalFile;
+    }
+
+    private FileType getFileTypeByPath(String path){
         File file = new File(path);
         if(file.exists()) {
             if (file.isFile()) {
                 return FileType.SingleFile;
-            } else if (file.isDirectory()) {
-                return FileType.Folder;
             } else {
-                throw new LianosRenamerException("Unexpected Error. Path exists but is neither a file nor a folder.");
+                return FileType.Folder;
             }
         }
         else{
-            return FileType.NonExistent; //Used to print an error later
+            return FileType.NonExistent;
         }
     }
 
@@ -43,5 +56,9 @@ public class LianosFile extends File {
 
     public FileType getType() {
         return type;
+    }
+
+    public LianosFile getOriginalFile(){
+        return originalFile;
     }
 }

@@ -2,16 +2,14 @@ package at.zierler.privat.test;
 
 import at.zierler.privat.FileHandler;
 import at.zierler.privat.LianosFile;
-import at.zierler.privat.Main;
 import at.zierler.privat.exceptions.LianosRenamerException;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Random;
+import java.util.ArrayList;
 
 /**
  * Created by florian on 2/12/16.
@@ -19,8 +17,7 @@ import java.util.Random;
 public class TestLianosRenamer {
 
     FileHandler fileHandler;
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    ByteArrayInputStream in;
 
     @Rule
     public TemporaryFolder folder= new TemporaryFolder();
@@ -30,34 +27,74 @@ public class TestLianosRenamer {
         fileHandler = new FileHandler();
     }
 
-    @Before
-    public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
-    }
-
-    @After
-    public void cleanUpStreams() {
-        System.setOut(null);
-        System.setErr(null);
-    }
-
     @Test
     public void testWithNonExistentFile() throws LianosRenamerException {
         LianosFile file = new LianosFile("non-existing-file");
-        fileHandler.handle(file);
-        Assert.assertEquals(file.getAbsolutePath() + " is not a file.",printResult());
+        Assert.assertTrue(fileHandler.handle(file).isEmpty());
     }
 
     @Test
     public void testWithNonVideoFile() throws LianosRenamerException, IOException {
-        File createdFile= folder.newFile("test.txt");
-        fileHandler.handle(new LianosFile(createdFile.getAbsolutePath()));
-        Assert.assertEquals(createdFile.getAbsolutePath() + " is not a video-file.",printResult());
+        LianosFile createdFile = new LianosFile(folder.newFile("test.txt"));
+        ArrayList<LianosFile> resultList = fileHandler.handle(createdFile);
+        Assert.assertFalse(resultList.isEmpty());
+        Assert.assertEquals(1,resultList.size());
+        Assert.assertEquals(resultList.get(0),resultList.get(0).getOriginalFile());
     }
 
-    private String printResult(){
-        return outContent.toString().trim();
+    @Test
+    public void testWithSubfolderWith2NonVideoFiles() throws LianosRenamerException, IOException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/test2.txt"));
+        ArrayList<LianosFile> resultList = fileHandler.handle(createdFolder);
+        Assert.assertFalse(resultList.isEmpty());
+        Assert.assertEquals(2,resultList.size());
+        for(LianosFile file:resultList){
+            Assert.assertEquals(file,file.getOriginalFile());
+        }
+    }
+
+    @Test
+    public void testWithSubfolderWith1UnrenameableVideoFileAnd1NonVideoFile() throws IOException, LianosRenamerException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/test2.mkv"));
+        ArrayList<LianosFile> resultList = fileHandler.handle(createdFolder);
+        Assert.assertFalse(resultList.isEmpty());
+        Assert.assertEquals(2,resultList.size());
+        for(LianosFile file:resultList){
+            Assert.assertEquals(file,file.getOriginalFile());
+        }
+    }
+
+    @Test
+    public void testWithSubfolderWith1RenamebaleVideoFileAnd1NonVideoFile() throws IOException, LianosRenamerException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/pretty.little.liars.4x12.mkv"));
+        ArrayList<LianosFile> resultList = fileHandler.handle(createdFolder);
+        Assert.assertFalse(resultList.isEmpty());
+        Assert.assertEquals(2,resultList.size());
+        Assert.assertEquals(createdFile1,resultList.get(0));
+        Assert.assertNotEquals(createdFile2,resultList.get(1));
+        Assert.assertEquals("Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv",resultList.get(1).getName());
+    }
+
+    @Test
+    public void testWith2VideoFilesOfSameShowInOneFolder() throws IOException, LianosRenamerException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/second.chance.s01e01.mkv"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/second.chance.s01e03.mp4"));
+        in = new ByteArrayInputStream("1".getBytes());
+        System.setIn(in);
+        ArrayList<LianosFile> resultList = fileHandler.handle(createdFolder);
+        Assert.assertFalse(resultList.isEmpty());
+        Assert.assertEquals(2,resultList.size());
+        Assert.assertNotEquals(createdFile1,resultList.get(0));
+        Assert.assertNotEquals(createdFile2,resultList.get(1));
+        Assert.assertEquals("Second Chance - S01E01 - Suitable Donor.mkv",resultList.get(1).getName());
+        Assert.assertEquals("Second Chance - S01E03 - From Darkness, the Sun.mp4",resultList.get(0).getName());
     }
 
 }
