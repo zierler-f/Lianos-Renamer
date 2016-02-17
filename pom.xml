@@ -44,6 +44,9 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <outputDirectory>${project.basedir}/installer</outputDirectory>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>lianos-renamer</finalName>
                 </configuration>
                 <executions>
                     <execution>

@@ -83,3 +83,6 @@ crashlytics-build.properties
 
 ## Restest folder for testing
 restest
+
+## JAR-File in installer folder
+installer/lianos-renamer.jar
