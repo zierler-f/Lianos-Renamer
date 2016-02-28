@@ -63,7 +63,9 @@ public class Episode {
             return null;
         }
         JSONObject resultObject = new JSONObject(resultString);
-        return resultObject.getString("name");
+        String episodeName = resultObject.getString("name");
+        episodeName = episodeName.replaceAll("/","_");
+        return episodeName;
     }
 
     private int userChooseSeries(JSONArray series){

@@ -97,4 +97,12 @@ public class TestLianosRenamer {
         Assert.assertEquals("Second Chance - S01E03 - From Darkness, the Sun.mp4",resultList.get(0).getName());
     }
 
+    @Test
+    public void testWithVideoFileWhereEpisodeNameContainsSlash() throws LianosRenamerException, IOException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/Royal.Pains.S06E10.HDTV.x264-KILLERS.mp4"));
+        ArrayList<LianosFile> resultList = fileHandler.handle(createdFolder);
+        Assert.assertEquals("Royal Pains - S06E10 - Good Air_Bad Air.mp4",resultList.get(0).getName());
+    }
+
 }
