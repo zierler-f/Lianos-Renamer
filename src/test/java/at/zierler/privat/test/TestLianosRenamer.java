@@ -76,9 +76,15 @@ public class TestLianosRenamer {
         ArrayList<LianosFile> resultList = fileHandler.handle(createdFolder);
         Assert.assertFalse(resultList.isEmpty());
         Assert.assertEquals(2,resultList.size());
-        Assert.assertEquals(createdFile1,resultList.get(0));
-        Assert.assertNotEquals(createdFile2,resultList.get(1));
-        Assert.assertEquals("Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv",resultList.get(1).getName());
+        Assert.assertTrue(resultList.contains(createdFile1));
+        Assert.assertFalse(resultList.contains(createdFile2));
+        LianosFile changedFile = null;
+        for(LianosFile f:resultList){
+            if(f.getName().equals("Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv")){
+                changedFile = f;
+            }
+        }
+        Assert.assertNotNull(changedFile);
     }
 
     @Test
