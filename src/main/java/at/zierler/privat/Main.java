@@ -2,9 +2,6 @@ package at.zierler.privat;
 
 import at.zierler.privat.exceptions.LianosRenamerException;
 
-/**
- * Created by florian on 2/8/16.
- */
 public class Main {
     public static void main(String[] args) throws LianosRenamerException {
         System.out.println("[>>> - [[[ Welcome to Lianos Renamer ]]] - <<<]");

@@ -5,9 +5,6 @@ import at.zierler.privat.exceptions.LianosRenamerException;
 import java.io.File;
 import java.util.ArrayList;
 
-/**
- * Created by florian on 2/8/16.
- */
 public class LianosFile extends File {
 
     private final FileType type;

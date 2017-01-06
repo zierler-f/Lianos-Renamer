@@ -10,9 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by florian on 2/12/16.
- */
 public class TestLianosRenamer {
 
     @Rule

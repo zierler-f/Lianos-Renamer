@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by florian on 2/10/16.
- */
 public class FileHandler {
 
     private int curFolderAnswer;

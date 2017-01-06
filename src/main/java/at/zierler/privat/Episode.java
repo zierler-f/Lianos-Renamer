@@ -12,9 +12,6 @@ import java.net.URL;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-/**
- * Created by florian on 2/10/16.
- */
 public class Episode {
 
     private String seriesName;
