@@ -7,7 +7,6 @@ import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,11 +15,10 @@ import java.util.ArrayList;
  */
 public class TestLianosRenamer {
 
-    FileHandler fileHandler;
-    ByteArrayInputStream in;
-
     @Rule
     public TemporaryFolder folder= new TemporaryFolder();
+    FileHandler fileHandler;
+    ByteArrayInputStream in;
 
     @Before
     public void setup(){
@@ -88,6 +86,7 @@ public class TestLianosRenamer {
     }
 
     @Test
+    @Ignore
     public void testWith2VideoFilesOfSameShowInOneFolder() throws IOException, LianosRenamerException {
         LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
         LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/second.chance.s01e01.mkv"));
