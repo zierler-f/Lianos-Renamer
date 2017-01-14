@@ -1,6 +1,4 @@
-package at.zierler.privat;
-
-import at.zierler.privat.exceptions.LianosRenamerException;
+package at.zierler.privat.lianosrenamer;
 
 public class Main {
     public static void main(String[] args) throws LianosRenamerException {

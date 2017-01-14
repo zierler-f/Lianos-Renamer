@@ -38,7 +38,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>at.zierler.privat.Main</mainClass>
+                            <mainClass>at.zierler.privat.lianosrenamer.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

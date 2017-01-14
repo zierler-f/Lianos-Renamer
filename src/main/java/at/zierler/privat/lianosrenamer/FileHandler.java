@@ -1,6 +1,4 @@
-package at.zierler.privat;
-
-import at.zierler.privat.exceptions.LianosRenamerException;
+package at.zierler.privat.lianosrenamer;
 
 import java.io.File;
 import java.util.ArrayList;

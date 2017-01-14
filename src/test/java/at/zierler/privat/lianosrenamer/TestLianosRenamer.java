@@ -1,8 +1,8 @@
-package at.zierler.privat.test;
+package at.zierler.privat.lianosrenamer;
 
-import at.zierler.privat.FileHandler;
-import at.zierler.privat.LianosFile;
-import at.zierler.privat.exceptions.LianosRenamerException;
+import at.zierler.privat.lianosrenamer.FileHandler;
+import at.zierler.privat.lianosrenamer.LianosFile;
+import at.zierler.privat.lianosrenamer.LianosRenamerException;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 

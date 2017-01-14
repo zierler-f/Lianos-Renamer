@@ -1,4 +1,4 @@
-package at.zierler.privat;
+package at.zierler.privat.lianosrenamer;
 
 public enum FileType {
     SingleFile,

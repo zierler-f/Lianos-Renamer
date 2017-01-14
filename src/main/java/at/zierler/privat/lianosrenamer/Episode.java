@@ -1,6 +1,5 @@
-package at.zierler.privat;
+package at.zierler.privat.lianosrenamer;
 
-import at.zierler.privat.exceptions.LianosRenamerException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
