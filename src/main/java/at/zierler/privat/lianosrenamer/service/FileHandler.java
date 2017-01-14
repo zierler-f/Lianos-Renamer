@@ -14,26 +14,28 @@ import java.util.stream.Collectors;
 
 public class FileHandler {
 
-    List<String> videoExtensions = Arrays.asList("mp4", "mkv", "wmv", "flv");
+    private final List<String> videoExtensions = Arrays.asList("mp4", "mkv", "wmv", "flv");
 
     public List<Path> getListOfVideoFilesByListOfFiles(List<File> inputFiles) throws LianosRenamerException {
         List<Path> videoFiles = new ArrayList<>();
         for (File f : inputFiles) {
-            List<Path> dirFiles;
-            try {
-                dirFiles = Files.walk(Paths.get(f.getPath())).filter(this::isVideoFile).collect(Collectors.toList());
-            } catch (IOException e) {
-                throw new LianosRenamerException("There was a problem while walking files.", e);
-            }
-            videoFiles.addAll(dirFiles);
+            addAllFilesToList(f, videoFiles);
         }
         return videoFiles;
     }
 
+    private List<Path> addAllFilesToList(File inputFile, List<Path> pathList) throws LianosRenamerException {
+        try {
+            pathList.addAll(Files.walk(Paths.get(inputFile.getPath())).filter(this::isVideoFile).collect(Collectors.toList()));
+        } catch (IOException e) {
+            throw new LianosRenamerException("There was a problem while walking files.", e);
+        }
+        return pathList;
+    }
+
     private boolean isVideoFile(Path path) {
-        String[] tmpSplit = path.getFileName().toString().split("\\.");
-        String extension = tmpSplit[tmpSplit.length - 1];
-        return videoExtensions.contains(extension);
+        String[] parts = path.getFileName().toString().split("\\.");
+        return parts.length != 1 && videoExtensions.contains(parts[parts.length - 1]);
     }
 
 }
