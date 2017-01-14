@@ -79,12 +79,22 @@ public class JsonHandlerTest extends Assert {
     }
 
     @Test
-    public void testGetAllShowsByUrl() throws LianosRenamerException {
+    public void testGetAllShowsByURL() throws LianosRenamerException {
         String url = "http://api.tvmaze.com/search/shows?q=\"csi\"";
         List<Show> actual = jsonHandler.getAllShowsByURL(url);
         assertThat(actual.size(),is(10));
         assertThat(actual.get(0).getId(),is(735));
         assertThat(actual.get(0).getName(),is("CSI: Cyber"));
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testGetAllShowsByURLFailsWrongUrl() throws LianosRenamerException{
+        jsonHandler.getAllShowsByURL("not an url");
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testGetAllShowsByURLFailsNotJson() throws LianosRenamerException{
+        jsonHandler.getAllShowsByURL("http://api.tvmaze.com/");
     }
 
 }
