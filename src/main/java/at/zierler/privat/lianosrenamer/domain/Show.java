@@ -1,4 +1,4 @@
-package at.zierler.privat.lianosrenamer.domain.json;
+package at.zierler.privat.lianosrenamer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

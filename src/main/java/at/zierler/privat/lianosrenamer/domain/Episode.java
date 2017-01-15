@@ -1,7 +1,10 @@
 package at.zierler.privat.lianosrenamer.domain;
 
-import at.zierler.privat.lianosrenamer.domain.json.Show;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Episode {
 
     private Show show;

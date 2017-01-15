@@ -1,7 +1,7 @@
 package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
-import at.zierler.privat.lianosrenamer.domain.json.Show;
+import at.zierler.privat.lianosrenamer.domain.Show;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
