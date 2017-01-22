@@ -8,6 +8,7 @@ import at.zierler.privat.lianosrenamer.helper.FileExtensionGetter;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -18,6 +19,7 @@ public class FileRenamer {
 
     private final JsonHandler jsonHandler = new JsonHandler();
     private final FileHandler fileHandler = new FileHandler();
+    private HashMap<String,Integer> givenAnswers = new HashMap<>();
 
     public void renameFiles(List<File> files) throws LianosRenamerException {
         List<Path> videoFiles = fileHandler.getListOfVideoFilesByListOfFiles(files);
@@ -39,14 +41,23 @@ public class FileRenamer {
                 String showName = lookupEpisode.getShow().getName();
                 try {
                     List<Show> possibleShows = jsonHandler.getAllShowsByURL(UrlAssembler.assembleShowQueryUrlByShowName(showName));
+                    String showFolderKey = getKeyByParentAndPossibleShows(file.getParentFile(),possibleShows);
+                    int userAnswer;
                     Show selectedShow;
-                    if (possibleShows.size() == 1) {
-                        selectedShow = possibleShows.get(0);
-                    } else if (possibleShows.size() < 1) {
-                        System.out.println("Couldn't find a show with " + showName + " in it.");
-                        return file;
+                    if(givenAnswers.containsKey(showFolderKey)){
+                        userAnswer = givenAnswers.get(showFolderKey);
+                        selectedShow = possibleShows.get(userAnswer);
                     } else {
-                        selectedShow = possibleShows.get(letUserChooseSeries(possibleShows));
+                        if (possibleShows.size() == 1) {
+                            selectedShow = possibleShows.get(0);
+                        } else if (possibleShows.size() < 1) {
+                            System.out.println("Couldn't find a show with " + showName + " in it.");
+                            return file;
+                        } else {
+                            userAnswer = letUserChooseSeries(possibleShows);
+                            selectedShow = possibleShows.get(userAnswer);
+                            givenAnswers.put(showFolderKey,userAnswer);
+                        }
                     }
                     Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
                     File newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
@@ -59,6 +70,15 @@ public class FileRenamer {
             }
         }
         return file;
+    }
+
+    private String getKeyByParentAndPossibleShows(File parent, List<Show> possibleShows){
+        StringBuilder sb = new StringBuilder();
+        sb.append(parent.getAbsolutePath().hashCode());
+        StringBuilder showsSb = new StringBuilder();
+        possibleShows.forEach(show -> showsSb.append(show.getName().hashCode()));
+        sb.append(showsSb.toString().hashCode());
+        return sb.toString();
     }
 
     private File generateNewFileNameByShowNameAndEpisodeAndOriginalFile(String showName, Episode episode, File originalFile) {

@@ -7,6 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,5 +100,35 @@ public class FileRenamerTest extends Assert {
         assertTrue(new File(createdFolder, "Royal Pains - S06E10 - Good Air_Bad Air.mp4").exists());
     }
 
+    @Test
+    public void testWith1VideoFileOfShowWithMultipleAnswers() throws IOException, LianosRenamerException {
+        File createdFolder = folder.newFolder("test-folder");
+        File createdFile1 = folder.newFile("test-folder/friends.s01e01.mkv");
+        System.setIn(new ByteArrayInputStream("1".getBytes()));
+        List<File> files = new ArrayList<>();
+        files.add(createdFile1);
+        assertTrue(createdFile1.exists());
+        fileRenamer.renameFiles(files);
+        assertFalse(createdFile1.exists());
+        assertTrue(new File(createdFolder, "Friends - S01E01 - The One Where It All Began.mkv" ).exists());
+    }
+
+    @Test
+    public void testWith2VideoFilesOfSameShowInOneFolder() throws IOException, LianosRenamerException {
+        File createdFolder = folder.newFolder("test-folder");
+        File createdFile1 = folder.newFile("test-folder/second.chance.s01e01.mkv");
+        File createdFile2 = folder.newFile("test-folder/second.chance.s01e03.mp4");
+        System.setIn(new ByteArrayInputStream("1".getBytes()));
+        List<File> files = new ArrayList<>();
+        files.add(createdFile1);
+        files.add(createdFile2);
+        assertTrue(createdFile1.exists());
+        assertTrue(createdFile2.exists());
+        fileRenamer.renameFiles(files);
+        assertFalse(createdFile1.exists());
+        assertFalse(createdFile2.exists());
+        assertTrue(new File(createdFolder, "Second Chance - S01E01 - Suitable Donor.mkv" ).exists());
+        assertTrue(new File(createdFolder, "Second Chance - S01E03 - From Darkness, the Sun.mp4" ).exists());
+    }
 
 }
