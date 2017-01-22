@@ -1,7 +1,6 @@
 package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
-import at.zierler.privat.lianosrenamer.domain.LianosFile;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,7 +25,7 @@ public class FileRenamerTest extends Assert {
 
     @Test(expected = LianosRenamerException.class)
     public void testWithNonExistentFile() throws LianosRenamerException {
-        LianosFile file = new LianosFile("non-existing-file");
+        File file = new File("non-existing-file");
         List<File> files = new ArrayList<>();
         files.add(file);
         fileRenamer.renameFiles(files);
@@ -34,7 +33,7 @@ public class FileRenamerTest extends Assert {
 
     @Test
     public void testWithNonVideoFile() throws LianosRenamerException, IOException {
-        LianosFile file = new LianosFile(folder.newFile("test.txt").getAbsolutePath());
+        File file = new File(folder.newFile("test.txt").getAbsolutePath());
         List<File> files = new ArrayList<>();
         files.add(file);
         assertTrue(file.exists());
@@ -44,9 +43,9 @@ public class FileRenamerTest extends Assert {
 
     @Test
     public void testWithSubfolderWith2NonVideoFiles() throws LianosRenamerException, IOException {
-        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
-        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
-        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/test2.txt"));
+        File createdFolder = folder.newFolder("test-folder");
+        File createdFile1 = folder.newFile("test-folder/test1.txt");
+        File createdFile2 = folder.newFile("test-folder/test2.txt");
         List<File> files = new ArrayList<>();
         files.add(createdFile1);
         files.add(createdFile2);
@@ -59,9 +58,9 @@ public class FileRenamerTest extends Assert {
 
     @Test
     public void testWithSubfolderWith1UnrenameableVideoFileAnd1NonVideoFile() throws IOException, LianosRenamerException {
-        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
-        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
-        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/test2.mkv"));
+        File createdFolder = folder.newFolder("test-folder");
+        File createdFile1 = folder.newFile("test-folder/test1.txt");
+        File createdFile2 = folder.newFile("test-folder/test2.mkv");
         List<File> files = new ArrayList<>();
         files.add(createdFile1);
         files.add(createdFile2);
@@ -74,9 +73,9 @@ public class FileRenamerTest extends Assert {
 
     @Test
     public void testWithSubfolderWith1RenamebaleVideoFileAnd1NonVideoFile() throws IOException, LianosRenamerException {
-        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
-        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
-        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/pretty.little.liars.4x12.mkv"));
+        File createdFolder = folder.newFolder("test-folder");
+        File createdFile1 = folder.newFile("test-folder/test1.txt");
+        File createdFile2 = folder.newFile("test-folder/pretty.little.liars.4x12.mkv");
         List<File> files = new ArrayList<>();
         files.add(createdFile1);
         files.add(createdFile2);
@@ -85,7 +84,19 @@ public class FileRenamerTest extends Assert {
         fileRenamer.renameFiles(files);
         assertTrue(createdFile1.exists());
         assertFalse(createdFile2.exists());
-        assertTrue(new LianosFile(createdFolder, "Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv").exists());
+        assertTrue(new File(createdFolder, "Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv").exists());
+    }
+
+    @Test
+    public void testWithVideoFileWhereEpisodeNameContainsSlash() throws LianosRenamerException, IOException {
+        File createdFolder = folder.newFolder("test-folder");
+        File createdFile1 = folder.newFile("test-folder/Royal.Pains.S06E10.HDTV.x264-KILLERS.mp4");
+        List<File> files = new ArrayList<>();
+        files.add(createdFile1);
+        assertTrue(createdFile1.exists());
+        fileRenamer.renameFiles(files);
+        assertFalse(createdFile1.exists());
+        assertTrue(new File(createdFolder, "Royal Pains - S06E10 - Good Air_Bad Air.mp4").exists());
     }
 
 }

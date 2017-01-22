@@ -2,7 +2,6 @@ package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
 import at.zierler.privat.lianosrenamer.domain.Episode;
-import at.zierler.privat.lianosrenamer.domain.LianosFile;
 import at.zierler.privat.lianosrenamer.domain.LookupEpisode;
 import at.zierler.privat.lianosrenamer.domain.Show;
 import at.zierler.privat.lianosrenamer.helper.FileExtensionGetter;
@@ -25,8 +24,8 @@ public class FileRenamer {
         videoFiles.forEach(this::renameFile);
     }
 
-    private LianosFile renameFile(Path path) {
-        LianosFile file = new LianosFile(path.toString());
+    private File renameFile(Path path) {
+        File file = new File(path.toString());
         String filename = file.getName();
         String absolutePath = file.getAbsolutePath();
         System.out.println("Now processing " + absolutePath + ".");
@@ -50,7 +49,7 @@ public class FileRenamer {
                         selectedShow = possibleShows.get(letUserChooseSeries(possibleShows));
                     }
                     Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
-                    LianosFile newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
+                    File newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
                     if (file.renameTo(newFile))
                         System.out.println("Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
                 } catch (LianosRenamerException e) {
@@ -62,11 +61,12 @@ public class FileRenamer {
         return file;
     }
 
-    private LianosFile generateNewFileNameByShowNameAndEpisodeAndOriginalFile(String showName, Episode episode, LianosFile originalFile) {
+    private File generateNewFileNameByShowNameAndEpisodeAndOriginalFile(String showName, Episode episode, File originalFile) {
         String seasonNumberFormatted = String.format("%02d", episode.getSeason());
         String episodeNumberFormatted = String.format("%02d", episode.getNumber());
-        return new LianosFile(originalFile.getParentFile(), showName + " - S" + seasonNumberFormatted + "E" + episodeNumberFormatted + " - " + episode.getName() +
-                "." + FileExtensionGetter.getFileExtension(originalFile.toPath()));
+        String newFileName = showName + " - S" + seasonNumberFormatted + "E" + episodeNumberFormatted + " - " + episode.getName() +
+                "." + FileExtensionGetter.getFileExtension(originalFile.toPath());
+        return new File(originalFile.getParentFile(), newFileName.replaceAll("/", "_"));
     }
 
     private LookupEpisode getLookupEpisodeByFileName(String filename) {
@@ -93,7 +93,9 @@ public class FileRenamer {
                 "Please choose a show by typing the number next to it and hitting enter.");
         final int[] index = {1};
         shows.forEach(s -> {
-            System.out.println("[" + index[0] + "] " + s.getName() + " (" + s.getPremiereYear() + ")");
+            int premiereYear = s.getPremiereYear();
+            String premiereYearString = premiereYear != -1 ? " (" + premiereYear + ")" : "";
+            System.out.println("[" + index[0] + "] " + s.getName() + premiereYearString);
             index[0]++;
         });
         Scanner scanner = new Scanner(System.in);

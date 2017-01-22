@@ -22,6 +22,8 @@ public class Show {
     private LocalDate premiered;
 
     public int getPremiereYear() {
+        if (premiered == null)
+            return -1;
         return premiered.getYear();
     }
 
