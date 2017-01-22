@@ -19,7 +19,7 @@ public class FileRenamer {
 
     private final JsonHandler jsonHandler = new JsonHandler();
     private final FileHandler fileHandler = new FileHandler();
-    private HashMap<String,Integer> givenAnswers = new HashMap<>();
+    private HashMap<String, Integer> givenAnswers = new HashMap<>();
 
     public void renameFiles(List<File> files) throws LianosRenamerException {
         List<Path> videoFiles = fileHandler.getListOfVideoFilesByListOfFiles(files);
@@ -41,10 +41,10 @@ public class FileRenamer {
                 String showName = lookupEpisode.getShow().getName();
                 try {
                     List<Show> possibleShows = jsonHandler.getAllShowsByURL(UrlAssembler.assembleShowQueryUrlByShowName(showName));
-                    String showFolderKey = getKeyByParentAndPossibleShows(file.getParentFile(),possibleShows);
+                    String showFolderKey = getKeyByParentAndPossibleShows(file.getParentFile(), possibleShows);
                     int userAnswer;
                     Show selectedShow;
-                    if(givenAnswers.containsKey(showFolderKey)){
+                    if (givenAnswers.containsKey(showFolderKey)) {
                         userAnswer = givenAnswers.get(showFolderKey);
                         selectedShow = possibleShows.get(userAnswer);
                     } else {
@@ -56,7 +56,7 @@ public class FileRenamer {
                         } else {
                             userAnswer = letUserChooseSeries(possibleShows);
                             selectedShow = possibleShows.get(userAnswer);
-                            givenAnswers.put(showFolderKey,userAnswer);
+                            givenAnswers.put(showFolderKey, userAnswer);
                         }
                     }
                     Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
@@ -72,7 +72,7 @@ public class FileRenamer {
         return file;
     }
 
-    private String getKeyByParentAndPossibleShows(File parent, List<Show> possibleShows){
+    private String getKeyByParentAndPossibleShows(File parent, List<Show> possibleShows) {
         StringBuilder sb = new StringBuilder();
         sb.append(parent.getAbsolutePath().hashCode());
         StringBuilder showsSb = new StringBuilder();

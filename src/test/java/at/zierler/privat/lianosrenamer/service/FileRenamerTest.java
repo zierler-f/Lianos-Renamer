@@ -110,7 +110,7 @@ public class FileRenamerTest extends Assert {
         assertTrue(createdFile1.exists());
         fileRenamer.renameFiles(files);
         assertFalse(createdFile1.exists());
-        assertTrue(new File(createdFolder, "Friends - S01E01 - The One Where It All Began.mkv" ).exists());
+        assertTrue(new File(createdFolder, "Friends - S01E01 - The One Where It All Began.mkv").exists());
     }
 
     @Test
@@ -127,8 +127,8 @@ public class FileRenamerTest extends Assert {
         fileRenamer.renameFiles(files);
         assertFalse(createdFile1.exists());
         assertFalse(createdFile2.exists());
-        assertTrue(new File(createdFolder, "Second Chance - S01E01 - Suitable Donor.mkv" ).exists());
-        assertTrue(new File(createdFolder, "Second Chance - S01E03 - From Darkness, the Sun.mp4" ).exists());
+        assertTrue(new File(createdFolder, "Second Chance - S01E01 - Suitable Donor.mkv").exists());
+        assertTrue(new File(createdFolder, "Second Chance - S01E03 - From Darkness, the Sun.mp4").exists());
     }
 
 }
