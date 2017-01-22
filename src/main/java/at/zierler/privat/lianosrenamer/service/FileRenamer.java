@@ -5,6 +5,7 @@ import at.zierler.privat.lianosrenamer.domain.Episode;
 import at.zierler.privat.lianosrenamer.domain.LookupEpisode;
 import at.zierler.privat.lianosrenamer.domain.Show;
 import at.zierler.privat.lianosrenamer.helper.FileExtensionGetter;
+import at.zierler.privat.lianosrenamer.helper.UrlAssembler;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -12,11 +13,14 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FileRenamer {
 
+    final Logger logger = Logger.getLogger(FileRenamer.class.getName());
     private final JsonHandler jsonHandler = new JsonHandler();
     private final FileHandler fileHandler = new FileHandler();
     private HashMap<String, Integer> givenAnswers = new HashMap<>();
@@ -30,13 +34,13 @@ public class FileRenamer {
         File file = new File(path.toString());
         String filename = file.getName();
         String absolutePath = file.getAbsolutePath();
-        System.out.println("Now processing " + absolutePath + ".");
+        logger.log(Level.INFO, "Now processing " + absolutePath + ".");
         if (!file.isFile()) {
-            System.out.println(absolutePath + " is not a file.");
+            logger.log(Level.WARNING, absolutePath + " is not a file.");
         } else {
             LookupEpisode lookupEpisode = getLookupEpisodeByFileName(filename);
             if (lookupEpisode == null) {
-                System.out.println("Couldn't find relevant information in filename of file " + filename + ". Please make sure the name matches standard patterns.");
+                logger.log(Level.WARNING, "Couldn't find relevant information in filename of file " + filename + ". Please make sure the name matches standard patterns.");
             } else {
                 String showName = lookupEpisode.getShow().getName();
                 try {
@@ -50,8 +54,8 @@ public class FileRenamer {
                     } else {
                         if (possibleShows.size() == 1) {
                             selectedShow = possibleShows.get(0);
-                        } else if (possibleShows.size() < 1) {
-                            System.out.println("Couldn't find a show with " + showName + " in it.");
+                        } else if (possibleShows.isEmpty()) {
+                            logger.log(Level.WARNING, "Couldn't find a show with " + showName + " in it.");
                             return file;
                         } else {
                             userAnswer = letUserChooseSeries(possibleShows);
@@ -59,13 +63,12 @@ public class FileRenamer {
                             givenAnswers.put(showFolderKey, userAnswer);
                         }
                     }
-                    Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
+                    Episode episode = jsonHandler.getEpisodeByURL(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
                     File newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
                     if (file.renameTo(newFile))
-                        System.out.println("Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
+                        logger.log(Level.FINEST, "Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
                 } catch (LianosRenamerException e) {
-                    System.out.println("Couldn't rename " + absolutePath + " due to following error: ");
-                    e.printStackTrace();
+                    logger.log(Level.WARNING, "Couldn't rename " + absolutePath + " due to following error: ", e);
                 }
             }
         }
@@ -109,25 +112,25 @@ public class FileRenamer {
     }
 
     private int letUserChooseSeries(List<Show> shows) {
-        System.out.println("More than one show with matching names was found.\n" +
+        logger.log(Level.INFO, "More than one show with matching names was found.\n" +
                 "Please choose a show by typing the number next to it and hitting enter.");
         final int[] index = {1};
         shows.forEach(s -> {
             int premiereYear = s.getPremiereYear();
             String premiereYearString = premiereYear != -1 ? " (" + premiereYear + ")" : "";
-            System.out.println("[" + index[0] + "] " + s.getName() + premiereYearString);
+            logger.log(Level.INFO, "[" + index[0] + "] " + s.getName() + premiereYearString);
             index[0]++;
         });
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Number: ");
+        logger.log(Level.ALL, "Number: ");
         int n;
         try {
             n = scanner.nextInt();
             if (n > shows.size() || n < 1) {
-                throw new InputMismatchException();
+                throw new InputMismatchException("Please use a number between 1 and " + shows.size() + ".");
             }
         } catch (InputMismatchException e) {
-            System.out.println("Invalid input. Please use a number between 1 and " + shows.size() + ".");
+            logger.log(Level.WARNING, "Invalid input.", e);
             return letUserChooseSeries(shows);
         }
         return n - 1;

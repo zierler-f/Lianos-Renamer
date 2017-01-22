@@ -34,7 +34,7 @@ public class JsonHandler {
         }
     }
 
-    public Episode getEpisodeByUrl(String urlString) throws LianosRenamerException {
+    public Episode getEpisodeByURL(String urlString) throws LianosRenamerException {
         try {
             URL url = new URL(urlString);
             return getEpisodeByURL(url);
