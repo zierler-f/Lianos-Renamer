@@ -6,7 +6,7 @@
 
     <groupId>at.zierler.privat</groupId>
     <artifactId>lianos-renamer</artifactId>
-    <version>3.0</version>
+    <version>3.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>

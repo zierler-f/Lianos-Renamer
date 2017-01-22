@@ -10,6 +10,5 @@ public class LookupEpisode {
     private Show show;
     private Integer seasonNumber;
     private Integer episodeNumber;
-    private String episodeTitle;
 
 }

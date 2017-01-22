@@ -1,6 +1,6 @@
 package at.zierler.privat.lianosrenamer.service;
 
-import at.zierler.privat.lianosrenamer.LianosRenamerException;
+import at.zierler.privat.lianosrenamer.exceptions.LianosRenamerException;
 
 import java.io.File;
 import java.nio.file.Path;

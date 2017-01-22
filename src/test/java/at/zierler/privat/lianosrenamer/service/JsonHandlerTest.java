@@ -1,11 +1,13 @@
 package at.zierler.privat.lianosrenamer.service;
 
-import at.zierler.privat.lianosrenamer.LianosRenamerException;
+import at.zierler.privat.lianosrenamer.domain.Episode;
 import at.zierler.privat.lianosrenamer.domain.Show;
+import at.zierler.privat.lianosrenamer.exceptions.LianosRenamerException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -33,6 +35,7 @@ public class JsonHandlerTest extends Assert {
         assertThat(firstShow.getId(), is(735));
         assertThat(firstShow.getName(), is("CSI: Cyber"));
         assertThat(firstShow.getPremiereYear(), is(2015));
+        assertThat(firstShow.getPremiered(), is(LocalDate.of(2015, 3, 4)));
     }
 
     @Test(expected = LianosRenamerException.class)
@@ -43,6 +46,25 @@ public class JsonHandlerTest extends Assert {
     @Test(expected = LianosRenamerException.class)
     public void testGetAllShowsByURLFailsNotJson() throws LianosRenamerException {
         jsonHandler.getAllShowsByURL("http://api.tvmaze.com/");
+    }
+
+    @Test
+    public void testGetEpisodeByURL() throws LianosRenamerException {
+        String url = "http://api.tvmaze.com/shows/431/episodebynumber?season=1&number=1";
+        Episode episode = jsonHandler.getEpisodeByURL(url);
+        assertThat(episode.getName(), is("The One Where It All Began"));
+        assertThat(episode.getSeason(), is(1));
+        assertThat(episode.getNumber(), is(1));
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testGetEpisodeByURLFailsURL() throws LianosRenamerException {
+        jsonHandler.getEpisodeByURL("not an url either");
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testGetEpisodeByURLFailsNotJson() throws LianosRenamerException {
+        jsonHandler.getEpisodeByURL("http://api.tvmaze.com/");
     }
 
 }

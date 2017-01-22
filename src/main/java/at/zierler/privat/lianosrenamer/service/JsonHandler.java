@@ -1,8 +1,8 @@
 package at.zierler.privat.lianosrenamer.service;
 
-import at.zierler.privat.lianosrenamer.LianosRenamerException;
 import at.zierler.privat.lianosrenamer.domain.Episode;
 import at.zierler.privat.lianosrenamer.domain.Show;
+import at.zierler.privat.lianosrenamer.exceptions.LianosRenamerException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
