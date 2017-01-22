@@ -9,8 +9,6 @@ import java.util.List;
 
 public class ArgsHandler {
 
-    private final FileHandler fileHandler = new FileHandler();
-
     public List<File> getListOfFilesByArgs(String[] args) throws LianosRenamerException {
         List<String> argsList = Arrays.asList(args);
         List<File> files = new ArrayList<>();

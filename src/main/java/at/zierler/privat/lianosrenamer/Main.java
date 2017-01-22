@@ -6,6 +6,10 @@ import at.zierler.privat.lianosrenamer.service.FileRenamer;
 
 public class Main {
 
+    private Main() {
+        throw new IllegalAccessError("Objects of the type Main cannot be created.");
+    }
+
     public static void main(String[] args) throws LianosRenamerException {
         new FileRenamer().renameFiles(new ArgsHandler().getListOfFilesByArgs(args));
     }
