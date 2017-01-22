@@ -51,7 +51,7 @@ public class FileRenamer {
                     }
                     Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
                     LianosFile newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
-                    if(file.renameTo(newFile))
+                    if (file.renameTo(newFile))
                         System.out.println("Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
                 } catch (LianosRenamerException e) {
                     System.out.println("Couldn't rename " + absolutePath + " due to following error: ");
