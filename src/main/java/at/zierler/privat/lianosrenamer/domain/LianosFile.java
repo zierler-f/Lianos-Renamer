@@ -18,12 +18,12 @@ public class LianosFile extends File {
         originalPath = pathname;
     }
 
-    public LianosFile(File file){
+    public LianosFile(File file) {
         super(file.getAbsolutePath());
         originalPath = file.getAbsolutePath();
     }
 
-    public  LianosFile(File parent, String child){
-        super(parent,child);
+    public LianosFile(File parent, String child) {
+        super(parent, child);
     }
 }

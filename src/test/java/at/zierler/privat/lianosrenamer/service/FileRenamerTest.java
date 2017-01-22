@@ -2,7 +2,6 @@ package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
 import at.zierler.privat.lianosrenamer.domain.LianosFile;
-import at.zierler.privat.lianosrenamer.domain.LookupEpisode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,11 +10,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.hamcrest.CoreMatchers.is;
 
 public class FileRenamerTest extends Assert {
 
@@ -89,7 +85,7 @@ public class FileRenamerTest extends Assert {
         fileRenamer.renameFiles(files);
         assertTrue(createdFile1.exists());
         assertFalse(createdFile2.exists());
-        assertTrue(new LianosFile(createdFolder,"Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv").exists());
+        assertTrue(new LianosFile(createdFolder, "Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv").exists());
     }
 
 }

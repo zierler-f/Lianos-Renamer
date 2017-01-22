@@ -45,9 +45,9 @@ public class JsonHandler {
 
     private Episode getEpisodeByURL(URL url) throws LianosRenamerException {
         try {
-            return objectMapper.readValue(url,Episode.class);
+            return objectMapper.readValue(url, Episode.class);
         } catch (IOException e) {
-            throw new LianosRenamerException("Couldn't parse provided JSON to an Episode Objects. Please check your input.",e);
+            throw new LianosRenamerException("Couldn't parse provided JSON to an Episode Objects. Please check your input.", e);
         }
     }
 }

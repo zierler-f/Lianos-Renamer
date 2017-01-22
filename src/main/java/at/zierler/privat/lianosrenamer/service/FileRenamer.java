@@ -2,13 +2,12 @@ package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
 import at.zierler.privat.lianosrenamer.domain.Episode;
-import at.zierler.privat.lianosrenamer.domain.LookupEpisode;
 import at.zierler.privat.lianosrenamer.domain.LianosFile;
+import at.zierler.privat.lianosrenamer.domain.LookupEpisode;
 import at.zierler.privat.lianosrenamer.domain.Show;
 import at.zierler.privat.lianosrenamer.helper.FileExtensionGetter;
 
 import java.io.File;
-import java.io.SyncFailedException;
 import java.nio.file.Path;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -26,35 +25,31 @@ public class FileRenamer {
         videoFiles.forEach(this::renameFile);
     }
 
-    private LianosFile renameFile(Path path){
+    private LianosFile renameFile(Path path) {
         LianosFile file = new LianosFile(path.toString());
         String filename = file.getName();
         String absolutePath = file.getAbsolutePath();
         System.out.println("Now processing " + absolutePath + ".");
-        if(!file.isFile()){
+        if (!file.isFile()) {
             System.out.println(absolutePath + " is not a file.");
-        }
-        else {
+        } else {
             LookupEpisode lookupEpisode = getLookupEpisodeByFileName(filename);
-            if(lookupEpisode == null){
+            if (lookupEpisode == null) {
                 System.out.println("Couldn't find relevant information in filename of file " + filename + ". Please make sure the name matches standard patterns.");
-            }
-            else {
+            } else {
                 String showName = lookupEpisode.getShow().getName();
                 try {
                     List<Show> possibleShows = jsonHandler.getAllShowsByURL(UrlAssembler.assembleShowQueryUrlByShowName(showName));
                     Show selectedShow;
-                    if(possibleShows.size() == 1){
+                    if (possibleShows.size() == 1) {
                         selectedShow = possibleShows.get(0);
-                        Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode,selectedShow.getId()));
-                        LianosFile newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(),episode, file);
+                        Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
+                        LianosFile newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
                         file.renameTo(newFile);
                         System.out.println("Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
-                    }
-                    else if(possibleShows.size() < 1){
+                    } else if (possibleShows.size() < 1) {
                         System.out.println("Couldn't find a show with " + showName + " in it.");
-                    }
-                    else {
+                    } else {
                         selectedShow = possibleShows.get(letUserChooseSeries(possibleShows));
                     }
                 } catch (LianosRenamerException e) {
@@ -65,10 +60,10 @@ public class FileRenamer {
         return file;
     }
 
-    private LianosFile generateNewFileNameByShowNameAndEpisodeAndOriginalFile(String showName, Episode episode, LianosFile originalFile){
+    private LianosFile generateNewFileNameByShowNameAndEpisodeAndOriginalFile(String showName, Episode episode, LianosFile originalFile) {
         String seasonNumberFormatted = String.format("%02d", episode.getSeason());
         String episodeNumberFormatted = String.format("%02d", episode.getNumber());
-        return new LianosFile(originalFile.getParentFile(),showName + " - S" + seasonNumberFormatted + "E" + episodeNumberFormatted + " - " + episode.getName() +
+        return new LianosFile(originalFile.getParentFile(), showName + " - S" + seasonNumberFormatted + "E" + episodeNumberFormatted + " - " + episode.getName() +
                 "." + FileExtensionGetter.getFileExtension(originalFile.toPath()));
     }
 
@@ -91,7 +86,7 @@ public class FileRenamer {
         return null;
     }
 
-    private int letUserChooseSeries(List<Show> shows){
+    private int letUserChooseSeries(List<Show> shows) {
         System.out.println("More than one show with matching names was found.\n" +
                 "Please choose a show by typing the number next to it and hitting enter.");
         final int[] index = {1};
@@ -102,17 +97,16 @@ public class FileRenamer {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Number: ");
         int n;
-        try{
+        try {
             n = scanner.nextInt();
-            if(n > shows.size() || n < 1){
+            if (n > shows.size() || n < 1) {
                 throw new InputMismatchException();
             }
-        }
-        catch(InputMismatchException e){
-            System.out.println("Invalid input. Please use a number between 1 and " + shows.size() + "." );
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please use a number between 1 and " + shows.size() + ".");
             return letUserChooseSeries(shows);
         }
-        return n-1;
+        return n - 1;
     }
 
 }

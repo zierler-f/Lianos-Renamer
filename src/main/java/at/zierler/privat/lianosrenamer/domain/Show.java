@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -23,7 +21,7 @@ public class Show {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate premiered;
 
-    public int getPremiereYear(){
+    public int getPremiereYear() {
         return premiered.getYear();
     }
 

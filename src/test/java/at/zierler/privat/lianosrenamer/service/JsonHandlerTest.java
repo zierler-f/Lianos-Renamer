@@ -6,8 +6,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,7 +32,7 @@ public class JsonHandlerTest extends Assert {
         assertThat(actual.size(), is(10));
         assertThat(firstShow.getId(), is(735));
         assertThat(firstShow.getName(), is("CSI: Cyber"));
-        assertThat(firstShow.getPremiereYear(),is(2015));
+        assertThat(firstShow.getPremiereYear(), is(2015));
     }
 
     @Test(expected = LianosRenamerException.class)
