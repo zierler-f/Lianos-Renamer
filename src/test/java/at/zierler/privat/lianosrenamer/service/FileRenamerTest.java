@@ -99,4 +99,5 @@ public class FileRenamerTest extends Assert {
         assertTrue(new File(createdFolder, "Royal Pains - S06E10 - Good Air_Bad Air.mp4").exists());
     }
 
+
 }
