@@ -13,9 +13,13 @@ import java.util.List;
 
 public class JsonHandler {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Show> getAllShowsByURL(String urlString) throws LianosRenamerException {
+    private JsonHandler() {
+        throw new IllegalAccessError("Objects of the type JsonHandler cannot be created.");
+    }
+
+    public static List<Show> getAllShowsByURL(String urlString) throws LianosRenamerException {
         try {
             URL url = new URL(urlString);
             return getAllShowsByURL(url);
@@ -24,7 +28,7 @@ public class JsonHandler {
         }
     }
 
-    private List<Show> getAllShowsByURL(URL url) throws LianosRenamerException {
+    private static List<Show> getAllShowsByURL(URL url) throws LianosRenamerException {
         List<Show> shows = new ArrayList<>();
         try {
             objectMapper.readTree(url).forEach(n -> shows.add(objectMapper.convertValue(n.get("show"), Show.class)));
@@ -34,7 +38,7 @@ public class JsonHandler {
         }
     }
 
-    public Episode getEpisodeByURL(String urlString) throws LianosRenamerException {
+    public static Episode getEpisodeByURL(String urlString) throws LianosRenamerException {
         try {
             URL url = new URL(urlString);
             return getEpisodeByURL(url);
@@ -43,7 +47,7 @@ public class JsonHandler {
         }
     }
 
-    private Episode getEpisodeByURL(URL url) throws LianosRenamerException {
+    private static Episode getEpisodeByURL(URL url) throws LianosRenamerException {
         try {
             return objectMapper.readValue(url, Episode.class);
         } catch (IOException e) {

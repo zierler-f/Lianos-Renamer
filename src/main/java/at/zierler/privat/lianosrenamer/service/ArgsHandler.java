@@ -9,7 +9,11 @@ import java.util.List;
 
 public class ArgsHandler {
 
-    public List<File> getListOfFilesByArgs(String[] args) throws LianosRenamerException {
+    private ArgsHandler() {
+        throw new IllegalAccessError("Objects of the type ArgsHandler cannot be created.");
+    }
+
+    public static List<File> getListOfFilesByArgs(String[] args) throws LianosRenamerException {
         List<String> argsList = Arrays.asList(args);
         List<File> files = new ArrayList<>();
         argsList.forEach(arg -> files.add(new File(arg)));

@@ -1,11 +1,8 @@
 package at.zierler.privat.lianosrenamer.service;
 
+import at.zierler.privat.lianosrenamer.BaseTest;
 import at.zierler.privat.lianosrenamer.exceptions.LianosRenamerException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,17 +11,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 
-public class ArgsHandlerTest extends Assert {
-
-    @Rule
-    public TemporaryFolder testDir = new TemporaryFolder();
-
-    private ArgsHandler argsHandler;
-
-    @Before
-    public void setup() {
-        argsHandler = new ArgsHandler();
-    }
+public class ArgsHandlerTest extends BaseTest {
 
     @Test
     public void testGetListOfVideoFilesByListOfFiles() throws IOException, LianosRenamerException {
@@ -62,7 +49,7 @@ public class ArgsHandlerTest extends Assert {
         argsList[1] = dir2.getAbsolutePath();
         argsList[2] = videoFile1.getAbsolutePath();
         argsList[3] = videoFile2.getAbsolutePath();
-        List<File> resultFiles = argsHandler.getListOfFilesByArgs(argsList);
+        List<File> resultFiles = ArgsHandler.getListOfFilesByArgs(argsList);
         assertThat(resultFiles.size(), is(4));
         assertTrue(resultFiles.contains(videoFile1));
         assertTrue(resultFiles.contains(videoFile2));

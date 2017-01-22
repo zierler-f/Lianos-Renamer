@@ -1,4 +1,4 @@
-package at.zierler.privat.lianosrenamer.helper;
+package at.zierler.privat.lianosrenamer.service;
 
 import java.nio.file.Path;
 
