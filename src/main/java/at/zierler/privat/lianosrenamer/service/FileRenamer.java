@@ -43,17 +43,19 @@ public class FileRenamer {
                     Show selectedShow;
                     if (possibleShows.size() == 1) {
                         selectedShow = possibleShows.get(0);
-                        Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
-                        LianosFile newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
-                        file.renameTo(newFile);
-                        System.out.println("Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
                     } else if (possibleShows.size() < 1) {
                         System.out.println("Couldn't find a show with " + showName + " in it.");
+                        return file;
                     } else {
                         selectedShow = possibleShows.get(letUserChooseSeries(possibleShows));
                     }
+                    Episode episode = jsonHandler.getEpisodeByUrl(UrlAssembler.assembleEpisodeQueryUrlByLookupEpisode(lookupEpisode, selectedShow.getId()));
+                    LianosFile newFile = generateNewFileNameByShowNameAndEpisodeAndOriginalFile(selectedShow.getName(), episode, file);
+                    if(file.renameTo(newFile))
+                        System.out.println("Successfully renamed " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath() + "!");
                 } catch (LianosRenamerException e) {
-                    System.out.println("Couldn't generate URL for show " + showName + ".");
+                    System.out.println("Couldn't rename " + absolutePath + " due to following error: ");
+                    e.printStackTrace();
                 }
             }
         }
