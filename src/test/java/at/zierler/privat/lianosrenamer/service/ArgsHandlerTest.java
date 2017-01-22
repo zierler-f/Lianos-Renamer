@@ -9,7 +9,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,14 +62,12 @@ public class ArgsHandlerTest extends Assert {
         argsList[1] = dir2.getAbsolutePath();
         argsList[2] = videoFile1.getAbsolutePath();
         argsList[3] = videoFile2.getAbsolutePath();
-        List<Path> resultFiles = argsHandler.getListOfVideoFilesByArgs(argsList);
-        assertThat(resultFiles.size(), is(6));
-        assertTrue(resultFiles.contains(videoFile1.toPath()));
-        assertTrue(resultFiles.contains(videoFile2.toPath()));
-        assertTrue(resultFiles.contains(videoFile3.toPath()));
-        assertTrue(resultFiles.contains(videoFile4.toPath()));
-        assertTrue(resultFiles.contains(videoFile5.toPath()));
-        assertTrue(resultFiles.contains(videoFile6.toPath()));
+        List<File> resultFiles = argsHandler.getListOfFilesByArgs(argsList);
+        assertThat(resultFiles.size(), is(4));
+        assertTrue(resultFiles.contains(videoFile1));
+        assertTrue(resultFiles.contains(videoFile2));
+        assertTrue(resultFiles.contains(dir1));
+        assertTrue(resultFiles.contains(dir2));
     }
 
 }
