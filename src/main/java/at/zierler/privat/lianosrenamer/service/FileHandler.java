@@ -1,6 +1,7 @@
 package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
+import at.zierler.privat.lianosrenamer.helper.FileExtensionGetter;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +35,7 @@ public class FileHandler {
     }
 
     private boolean isVideoFile(Path path) {
-        String[] parts = path.getFileName().toString().split("\\.");
-        return parts.length != 1 && videoExtensions.contains(parts[parts.length - 1]);
+        return videoExtensions.contains(FileExtensionGetter.getFileExtension(path));
     }
 
 }

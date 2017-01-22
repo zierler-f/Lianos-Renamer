@@ -1,12 +1,19 @@
 package at.zierler.privat.lianosrenamer.service;
 
 import at.zierler.privat.lianosrenamer.LianosRenamerException;
-import at.zierler.privat.lianosrenamer.domain.Episode;
+import at.zierler.privat.lianosrenamer.domain.LianosFile;
+import at.zierler.privat.lianosrenamer.domain.LookupEpisode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -21,25 +28,68 @@ public class FileRenamerTest extends Assert {
         fileRenamer = new FileRenamer();
     }
 
-    @Test
-    public void testGetShowByFilename() throws LianosRenamerException {
-        Episode pll = fileRenamer.getShowByFileName("pretty.little.liars.4x12.mkv");
-        Episode sc = fileRenamer.getShowByFileName("second.chance.s01e01.mkv");
-        Episode rp = fileRenamer.getShowByFileName("Royal.Pains.S06E10.HDTV.x264-KILLERS.mp4");
-        Episode sal = fileRenamer.getShowByFileName("Secrets-and-lies.01X02.flv");
-        assertThat(pll.getShow().getName(), is("pretty-little-liars"));
-        assertThat(pll.getSeasonNumber(), is(4));
-        assertThat(pll.getEpisodeNumber(), is(12));
-        assertThat(sc.getShow().getName(), is("second-chance"));
-        assertThat(sc.getSeasonNumber(), is(1));
-        assertThat(sc.getEpisodeNumber(), is(1));
-        assertThat(rp.getShow().getName(), is("royal-pains"));
-        assertThat(rp.getSeasonNumber(), is(6));
-        assertThat(rp.getEpisodeNumber(), is(10));
-        assertThat(sal.getShow().getName(), is("secrets-lies"));
-        assertThat(sal.getSeasonNumber(), is(1));
-        assertThat(sal.getEpisodeNumber(), is(2));
+    @Test(expected = LianosRenamerException.class)
+    public void testWithNonExistentFile() throws LianosRenamerException {
+        LianosFile file = new LianosFile("non-existing-file");
+        List<File> files = new ArrayList<>();
+        files.add(file);
+        fileRenamer.renameFiles(files);
     }
 
+    @Test
+    public void testWithNonVideoFile() throws LianosRenamerException, IOException {
+        LianosFile file = new LianosFile(folder.newFile("test.txt").getAbsolutePath());
+        List<File> files = new ArrayList<>();
+        files.add(file);
+        assertTrue(file.exists());
+        fileRenamer.renameFiles(files);
+        assertTrue(file.exists());
+    }
+
+    @Test
+    public void testWithSubfolderWith2NonVideoFiles() throws LianosRenamerException, IOException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/test2.txt"));
+        List<File> files = new ArrayList<>();
+        files.add(createdFile1);
+        files.add(createdFile2);
+        assertTrue(createdFile1.exists());
+        assertTrue(createdFile2.exists());
+        fileRenamer.renameFiles(files);
+        assertTrue(createdFile1.exists());
+        assertTrue(createdFile2.exists());
+    }
+
+    @Test
+    public void testWithSubfolderWith1UnrenameableVideoFileAnd1NonVideoFile() throws IOException, LianosRenamerException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/test2.mkv"));
+        List<File> files = new ArrayList<>();
+        files.add(createdFile1);
+        files.add(createdFile2);
+        assertTrue(createdFile1.exists());
+        assertTrue(createdFile2.exists());
+        fileRenamer.renameFiles(files);
+        assertTrue(createdFile1.exists());
+        assertTrue(createdFile2.exists());
+    }
+
+    @Test
+    public void testWithSubfolderWith1RenamebaleVideoFileAnd1NonVideoFile() throws IOException, LianosRenamerException {
+        LianosFile createdFolder = new LianosFile(folder.newFolder("test-folder"));
+        LianosFile createdFile1 = new LianosFile(folder.newFile("test-folder/test1.txt"));
+        LianosFile createdFile2 = new LianosFile(folder.newFile("test-folder/pretty.little.liars.4x12.mkv"));
+        List<File> files = new ArrayList<>();
+        files.add(createdFile1);
+        files.add(createdFile2);
+        assertTrue(createdFile1.exists());
+        assertTrue(createdFile2.exists());
+        fileRenamer.renameFiles(files);
+        assertTrue(createdFile1.exists());
+        assertFalse(createdFile2.exists());
+        assertTrue(new LianosFile(createdFolder,"Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv").exists());
+    }
 
 }
