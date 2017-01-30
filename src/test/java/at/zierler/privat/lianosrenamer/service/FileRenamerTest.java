@@ -85,7 +85,7 @@ public class FileRenamerTest extends BaseTest {
         assertTrue(createdFile1.exists());
         FileRenamer.renameFiles(files);
         assertFalse(createdFile1.exists());
-        assertTrue(new File(createdFolder, "Royal Pains - S06E10 - Good Air_Bad Air.mp4").exists());
+        assertTrue(new File(createdFolder, "Royal Pains - S06E10 - Good Air - Bad Air.mp4").exists());
     }
 
     @Test
@@ -117,6 +117,27 @@ public class FileRenamerTest extends BaseTest {
         assertFalse(createdFile2.exists());
         assertTrue(new File(createdFolder, "Second Chance - S01E01 - Suitable Donor.mkv").exists());
         assertTrue(new File(createdFolder, "Second Chance - S01E03 - From Darkness, the Sun.mp4").exists());
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testRenamerFailsNoEpisode() throws LianosRenamerException {
+        ArrayList<File> files = new ArrayList<>();
+        files.add(new File("pretty-little-liars-3x99.mp4"));
+        FileRenamer.renameFiles(files);
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testRenamerFailsNoShow() throws LianosRenamerException {
+        ArrayList<File> files = new ArrayList<>();
+        files.add(new File("this is not a show.mp4"));
+        FileRenamer.renameFiles(files);
+    }
+
+    @Test(expected = LianosRenamerException.class)
+    public void testRenamerFailsNotWriteable() throws LianosRenamerException {
+        ArrayList<File> files = new ArrayList<>();
+        files.add(new File("riverdale.1x02.mp4"));
+        FileRenamer.renameFiles(files);
     }
 
 }
