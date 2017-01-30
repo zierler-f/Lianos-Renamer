@@ -9,6 +9,8 @@ public class FileExtensionGetter {
     }
 
     public static String getFileExtension(Path path) {
+        if (path == null)
+            return null;
         String[] parts = path.getFileName().toString().split("\\.");
         if (parts.length < 2)
             return null;

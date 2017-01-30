@@ -24,4 +24,9 @@ public class FileExtensionGetterTest extends Assert {
         assertNull(FileExtensionGetter.getFileExtension(new File("file").toPath()));
     }
 
+    @Test
+    public void testGetFileExtensionEmpty() {
+        assertNull(FileExtensionGetter.getFileExtension(null));
+    }
+
 }
