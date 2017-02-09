@@ -11,7 +11,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws LianosRenamerException {
-        FileRenamer.renameFiles(ArgsHandler.getListOfFilesByArgs(args));
+        FileRenamer.of(ArgsHandler.of(args).getFileList()).rename();
     }
 
 }

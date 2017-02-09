@@ -13,22 +13,25 @@ import java.util.List;
 
 public class JsonHandler {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private URL url;
+    private ObjectMapper objectMapper;
 
-    private JsonHandler() {
-        throw new IllegalAccessError("Objects of the type JsonHandler cannot be created.");
+    private JsonHandler(URL url, ObjectMapper objectMapper) {
+        this.url = url;
+        this.objectMapper = objectMapper;
     }
 
-    public static List<Show> getAllShowsByURL(String urlString) throws LianosRenamerException {
+    public static JsonHandler of(String url) throws LianosRenamerException {
+        URL u;
         try {
-            URL url = new URL(urlString);
-            return getAllShowsByURL(url);
+            u = new URL(url);
         } catch (MalformedURLException e) {
-            throw new LianosRenamerException("Provided String doesn't seem to be an URL. Please check.", e);
+            throw new LianosRenamerException("Provided String doesn't seem to be an URL.", e);
         }
+        return new JsonHandler(u, new ObjectMapper());
     }
 
-    private static List<Show> getAllShowsByURL(URL url) throws LianosRenamerException {
+    public List<Show> getAllShowsByURL() throws LianosRenamerException {
         List<Show> shows = new ArrayList<>();
         try {
             objectMapper.readTree(url).forEach(n -> shows.add(objectMapper.convertValue(n.get("show"), Show.class)));
@@ -38,16 +41,7 @@ public class JsonHandler {
         }
     }
 
-    public static Episode getEpisodeByURL(String urlString) throws LianosRenamerException {
-        try {
-            URL url = new URL(urlString);
-            return getEpisodeByURL(url);
-        } catch (MalformedURLException e) {
-            throw new LianosRenamerException("Provided String doesn't seem to be an URL. Please check.", e);
-        }
-    }
-
-    private static Episode getEpisodeByURL(URL url) throws LianosRenamerException {
+    public Episode getEpisodeByURL() throws LianosRenamerException {
         try {
             return objectMapper.readValue(url, Episode.class);
         } catch (IOException e) {

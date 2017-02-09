@@ -6,4 +6,8 @@ public class LianosRenamerException extends Exception {
         super(message, cause);
     }
 
+    public LianosRenamerException(String message) {
+        super(message);
+    }
+
 }

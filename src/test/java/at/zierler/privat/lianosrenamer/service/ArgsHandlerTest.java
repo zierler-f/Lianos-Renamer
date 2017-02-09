@@ -49,7 +49,7 @@ public class ArgsHandlerTest extends BaseTest {
         argsList[1] = dir2.getAbsolutePath();
         argsList[2] = videoFile1.getAbsolutePath();
         argsList[3] = videoFile2.getAbsolutePath();
-        List<File> resultFiles = ArgsHandler.getListOfFilesByArgs(argsList);
+        List<File> resultFiles = ArgsHandler.of(argsList).getFileList();
         assertThat(resultFiles.size(), is(4));
         assertTrue(resultFiles.contains(videoFile1));
         assertTrue(resultFiles.contains(videoFile2));

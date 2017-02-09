@@ -17,7 +17,7 @@ public class FileRenamerTest extends BaseTest {
         File file = new File("non-existing-file");
         List<File> files = new ArrayList<>();
         files.add(file);
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
     }
 
     @Test
@@ -26,7 +26,7 @@ public class FileRenamerTest extends BaseTest {
         List<File> files = new ArrayList<>();
         files.add(file);
         assertTrue(file.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertTrue(file.exists());
     }
 
@@ -40,7 +40,7 @@ public class FileRenamerTest extends BaseTest {
         files.add(createdFile2);
         assertTrue(createdFile1.exists());
         assertTrue(createdFile2.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertTrue(createdFile1.exists());
         assertTrue(createdFile2.exists());
     }
@@ -55,7 +55,7 @@ public class FileRenamerTest extends BaseTest {
         files.add(createdFile2);
         assertTrue(createdFile1.exists());
         assertTrue(createdFile2.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertTrue(createdFile1.exists());
         assertTrue(createdFile2.exists());
     }
@@ -70,7 +70,7 @@ public class FileRenamerTest extends BaseTest {
         files.add(createdFile2);
         assertTrue(createdFile1.exists());
         assertTrue(createdFile2.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertTrue(createdFile1.exists());
         assertFalse(createdFile2.exists());
         assertTrue(new File(createdFolder, "Pretty Little Liars - S04E12 - Now You See Me, Now You Don't.mkv").exists());
@@ -83,7 +83,7 @@ public class FileRenamerTest extends BaseTest {
         List<File> files = new ArrayList<>();
         files.add(createdFile1);
         assertTrue(createdFile1.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertFalse(createdFile1.exists());
         assertTrue(new File(createdFolder, "Royal Pains - S06E10 - Good Air - Bad Air.mp4").exists());
     }
@@ -96,7 +96,7 @@ public class FileRenamerTest extends BaseTest {
         List<File> files = new ArrayList<>();
         files.add(createdFile1);
         assertTrue(createdFile1.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertFalse(createdFile1.exists());
         assertTrue(new File(createdFolder, "Friends - S01E01 - The One Where It All Began.mkv").exists());
     }
@@ -112,7 +112,7 @@ public class FileRenamerTest extends BaseTest {
         files.add(createdFile2);
         assertTrue(createdFile1.exists());
         assertTrue(createdFile2.exists());
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
         assertFalse(createdFile1.exists());
         assertFalse(createdFile2.exists());
         assertTrue(new File(createdFolder, "Second Chance - S01E01 - Suitable Donor.mkv").exists());
@@ -123,21 +123,21 @@ public class FileRenamerTest extends BaseTest {
     public void testRenamerFailsNoEpisode() throws LianosRenamerException {
         ArrayList<File> files = new ArrayList<>();
         files.add(new File("pretty-little-liars-3x99.mp4"));
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
     }
 
     @Test(expected = LianosRenamerException.class)
     public void testRenamerFailsNoShow() throws LianosRenamerException {
         ArrayList<File> files = new ArrayList<>();
         files.add(new File("this is not a show.mp4"));
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
     }
 
     @Test(expected = LianosRenamerException.class)
     public void testRenamerFailsNotWriteable() throws LianosRenamerException {
         ArrayList<File> files = new ArrayList<>();
         files.add(new File("riverdale.1x02.mp4"));
-        FileRenamer.renameFiles(files);
+        FileRenamer.of(files).rename();
     }
 
 }

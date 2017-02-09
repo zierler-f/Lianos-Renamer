@@ -33,7 +33,7 @@ public class FileHandlerTest extends BaseTest {
         assertTrue(videoFile3.createNewFile());
         inputFiles.add(videoFile1);
         inputFiles.add(dir1);
-        List<Path> resultFiles = FileHandler.getListOfVideoFilesByListOfFiles(inputFiles);
+        List<Path> resultFiles = FileHandler.of(inputFiles).getListOfVideoFiles();
         assertThat(resultFiles.size(), is(3));
         assertTrue(resultFiles.contains(videoFile1.toPath()));
         assertTrue(resultFiles.contains(videoFile2.toPath()));

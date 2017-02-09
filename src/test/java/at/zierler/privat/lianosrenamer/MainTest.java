@@ -14,9 +14,7 @@ public class MainTest extends BaseTest {
         File file1 = testDir.newFile("pretty-little-liars.s07e10.mp4");
         File file2 = new File(folder1, "riverdale.1x1.mkv");
         assertTrue(file2.createNewFile());
-        String[] args = new String[2];
-        args[0] = folder1.getAbsolutePath();
-        args[1] = file1.getAbsolutePath();
+        String[] args = {folder1.getAbsolutePath(), file1.getAbsolutePath()};
         Main.main(args);
         File expectedFile1 = new File(folder1, "Riverdale - S01E01 - Chapter One - The River's Edge.mkv");
         File expectedFile2 = new File(testDir.getRoot(), "Pretty Little Liars - S07E10 - The Darkest Knight.mp4");
