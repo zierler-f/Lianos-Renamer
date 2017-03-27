@@ -13,8 +13,14 @@ public class ArgumentHandler implements Function {
 
     private String[] args;
 
+    /**
+     * sets local String array args to copy of provided arguments
+     *
+     * @param args provided arguments
+     */
+
     public ArgumentHandler(String[] args) {
-        this.args = args;
+        this.args = Arrays.copyOf(args, args.length);
     }
 
     /**
@@ -49,7 +55,7 @@ public class ArgumentHandler implements Function {
             return true;
         } else {
             logger.log(Level.WARNING, "Neither a file nor a directory was found at path: " + file.getAbsolutePath() +
-                    ". Continuing with other paths.");
+                    ". Continuing with remaining paths.");
             return false;
         }
     }

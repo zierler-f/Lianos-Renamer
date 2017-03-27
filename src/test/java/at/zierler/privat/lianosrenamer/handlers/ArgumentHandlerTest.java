@@ -1,6 +1,6 @@
 package at.zierler.privat.lianosrenamer.handlers;
 
-import at.zierler.privat.lianosrenamer.BaseTest;
+import at.zierler.privat.lianosrenamer.FileTest;
 import org.junit.Test;
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
-public class ArgumentHandlerTest extends BaseTest {
+public class ArgumentHandlerTest extends FileTest {
 
     @Test
     public void testArgumentHandler() throws IOException {
