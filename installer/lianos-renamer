@@ -1,4 +1,0 @@
-#!/bin/bash
-
-APP_HOME="/usr/share/lianos-renamer";
-java -jar "$APP_HOME/lianos-renamer.jar" "$@";
