@@ -8,7 +8,7 @@ public class FileExt extends File {
     private String extension;
 
     /**
-     * creates new FileExt from path
+     * creates new FileExt from pathname
      *
      * @param pathname path on file system
      */
@@ -17,21 +17,14 @@ public class FileExt extends File {
         super(pathname);
     }
 
+    /**
+     * creates new FileExt from path
+     *
+     * @param path path on file system
+     */
+
     public FileExt(Path path) {
         super(path.toString());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        /*if (!(o instanceof FileExt)) return false;
-        FileExt that = (FileExt) o;
-        return super.equals(o) && this.getExtension().equals(that.getExtension());*/
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
     }
 
     /**
@@ -63,4 +56,18 @@ public class FileExt extends File {
         }
         return parts[parts.length - 1];
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof FileExt)) return false;
+        FileExt that = (FileExt) o;
+        return super.equals(o) && this.getExtension().equals(that.getExtension());
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
 }
