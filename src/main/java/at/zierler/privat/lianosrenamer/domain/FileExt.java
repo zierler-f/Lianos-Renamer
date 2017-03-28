@@ -18,9 +18,10 @@ public class FileExt extends File {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof FileExt)) return false;
+        /*if (!(o instanceof FileExt)) return false;
         FileExt that = (FileExt) o;
-        return super.equals(o) && this.getExtension().equals(that.getExtension());
+        return super.equals(o) && this.getExtension().equals(that.getExtension());*/
+        return super.equals(o);
     }
 
     @Override

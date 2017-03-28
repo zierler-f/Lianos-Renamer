@@ -7,6 +7,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * converts array of arguments, to list of files
+ */
+
 public class ArgumentHandler implements Function {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -14,12 +18,15 @@ public class ArgumentHandler implements Function {
     private String[] args;
 
     /**
-     * sets local String array args to copy of provided arguments
+     * sets instance String array args to copy of provided arguments, if more than one argument is provided
      *
      * @param args provided arguments
      */
 
     public ArgumentHandler(String[] args) {
+        if (args.length < 1) {
+            throw new IllegalArgumentException("Please provide at least on argument.");
+        }
         this.args = Arrays.copyOf(args, args.length);
     }
 
@@ -49,15 +56,12 @@ public class ArgumentHandler implements Function {
     private boolean argExistsAsFile(File file) {
         if (file.isFile()) {
             logger.log(Level.INFO, "Found single file at path: " + file.getAbsolutePath());
-            return true;
         } else if (file.isDirectory()) {
             logger.log(Level.INFO, "Found directory at path: " + file.getAbsolutePath());
-            return true;
         } else {
-            logger.log(Level.WARNING, "Neither a file nor a directory was found at path: " + file.getAbsolutePath() +
-                    ". Continuing with remaining paths.");
-            return false;
+            throw new IllegalArgumentException(file.getAbsolutePath() + " does not refer to a file or directory.");
         }
+        return true;
     }
 
 }

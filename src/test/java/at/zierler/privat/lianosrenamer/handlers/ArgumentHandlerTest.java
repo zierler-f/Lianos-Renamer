@@ -14,13 +14,24 @@ public class ArgumentHandlerTest extends FileTest {
 
     @Test
     public void testArgumentHandler() throws IOException {
-        File dir1 = temporaryFolder.newFolder("dir1");
-        temporaryFolder.newFolder("dir2");
-        File file1 = temporaryFolder.newFile("file1.txt");
-        String[] args = {dir1.getAbsolutePath(), "/dev/null/file1", file1.getAbsolutePath(), "/dev/null/file2"};
+        File dir11 = temporaryFolder.newFolder("dir11");
+        File file11 = temporaryFolder.newFile("file11.txt");
+        String[] args = {dir11.getAbsolutePath(), file11.getAbsolutePath()};
         List<File> result = new ArgumentHandler(args).doJob();
-        assertThat(result, contains(dir1, file1));
+        assertThat(result, contains(dir11, file11));
         assertThat(result.size(), is(2));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testArgumentHandlerFailsNoArgs() {
+        new ArgumentHandler(new String[0]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testArgumentHandlerFailsWrongArg() throws IOException {
+        File file21 = temporaryFolder.newFile("file21.txt");
+        String[] args = {file21.getAbsolutePath(), "/dev/null/file"};
+        new ArgumentHandler(args).doJob();
     }
 
 }
