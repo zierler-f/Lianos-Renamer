@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class VideoFileFinder implements Function {
@@ -19,6 +21,7 @@ public class VideoFileFinder implements Function {
      */
 
     private static final List<String> knownVideoExtensions = loadKnownVideoExtensions();
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
     /**
      * List of files/directories to search for video files in
      */
@@ -74,9 +77,11 @@ public class VideoFileFinder implements Function {
                         return Files
                                 .walk(file.toPath())
                                 .map(FileExt::new)
-                                .filter(this::isVideoFile);
+                                .filter(this::isVideoFile)
+                                .peek(fileExt -> logger.log(Level.INFO, "Found video file at path: " + fileExt.getAbsolutePath()));
                     } catch (IOException e) {
-                        throw new RuntimeException("Error during walking of files.");
+                        logger.log(Level.SEVERE, "Error occurred while walking files.", e);
+                        throw new RuntimeException(e);
                     }
                 })
                 .distinct()
