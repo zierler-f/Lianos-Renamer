@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,28 +17,13 @@ public class VideoFileFinder implements Function {
     /**
      * List of all video extensions the program knows
      */
-    private final List<String> knownVideoExtensions;
+
+    private static final List<String> knownVideoExtensions = loadKnownVideoExtensions();
     /**
      * List of files/directories to search for video files in
      */
-    private List<File> files;
 
-    {
-        Properties properties = new Properties();
-        InputStream inputStream = VideoFileFinder.class.getClassLoader().getResourceAsStream("application.properties");
-        if (inputStream == null) {
-            throw new RuntimeException("Properties file not found.");
-        }
-        try {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("Error while reading properties file.", e);
-        }
-        if (!properties.containsKey("video-extensions")) {
-            throw new RuntimeException("Key \"video-extensions\" not found in properties file.");
-        }
-        knownVideoExtensions = Arrays.asList(properties.getProperty("video-extensions").split(","));
-    }
+    private List<File> files;
 
     /**
      * sets instance variable files to provided directories/files to search
@@ -51,18 +35,60 @@ public class VideoFileFinder implements Function {
         this.files = new ArrayList<>(files);
     }
 
+    /**
+     * loads video extensions from application.properties file and returns default video extensions if file doesn't exist
+     *
+     * @return list of known video extensions
+     */
+
+    private static List<String> loadKnownVideoExtensions() {
+        List<String> defaultKnownVideoExtensions = Arrays.asList("mp4", "mkv", "flv", "wmv", "avi");
+        Properties properties = new Properties();
+        InputStream inputStream = VideoFileFinder.class.getClassLoader().getResourceAsStream("application.properties");
+        if (inputStream == null) {
+            return defaultKnownVideoExtensions;
+        }
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            return defaultKnownVideoExtensions;
+        }
+        if (!properties.containsKey("video-extensions")) {
+            return defaultKnownVideoExtensions;
+        }
+        return Arrays.asList(properties.getProperty("video-extensions").split(","));
+    }
+
+    /**
+     * walk all provided files/directories, find all video-files and return them
+     *
+     * @return all video files in provided files/directories
+     */
+
     @Override
     public List<FileExt> doJob() {
-        List<FileExt> videoFiles = new ArrayList<>();
-        files.forEach(file -> {
-            try {
-                videoFiles.addAll(Files.walk(Paths.get(file.getAbsolutePath())).map(path -> new FileExt(path.toString())).filter(this::isVideoFile).collect(Collectors.toList()));
-            } catch (IOException e) {
-                throw new RuntimeException("Error during walking of files.");
-            }
-        });
-        return videoFiles;
+        return files
+                .parallelStream()
+                .flatMap(file -> {
+                    try {
+                        return Files
+                                .walk(file.toPath())
+                                .map(FileExt::new)
+                                .filter(this::isVideoFile);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error during walking of files.");
+                    }
+                })
+                .distinct()
+                .collect(Collectors.toList());
     }
+
+    /**
+     * checks if a file's extension matches one of the known video file extensions
+     *
+     * @param fileExt a file
+     * @return if the file is a video file
+     */
 
     private boolean isVideoFile(FileExt fileExt) {
         return knownVideoExtensions.contains(fileExt.getExtension());

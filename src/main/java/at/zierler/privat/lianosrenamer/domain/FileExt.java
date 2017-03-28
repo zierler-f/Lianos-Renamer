@@ -1,6 +1,7 @@
 package at.zierler.privat.lianosrenamer.domain;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class FileExt extends File {
 
@@ -14,6 +15,10 @@ public class FileExt extends File {
 
     public FileExt(String pathname) {
         super(pathname);
+    }
+
+    public FileExt(Path path) {
+        super(path.toString());
     }
 
     @Override
@@ -49,6 +54,9 @@ public class FileExt extends File {
      */
 
     private String findExtension() {
+        if (this.isDirectory()) {
+            return null;
+        }
         String[] parts = this.getName().split("\\.");
         if (parts.length < 2) {
             return "";
