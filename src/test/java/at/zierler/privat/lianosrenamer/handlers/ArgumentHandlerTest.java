@@ -5,9 +5,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
 public class ArgumentHandlerTest extends FileTest {
@@ -16,9 +16,10 @@ public class ArgumentHandlerTest extends FileTest {
     public void testArgumentHandler() throws IOException {
         File dir11 = temporaryFolder.newFolder("dir11");
         File file11 = temporaryFolder.newFile("file11.txt");
-        String[] args = {dir11.getAbsolutePath(), file11.getAbsolutePath()};
-        List<File> result = new ArgumentHandler(args).doJob();
-        assertThat(result, contains(dir11, file11));
+        String[] args = {dir11.getAbsolutePath(), file11.getAbsolutePath(), file11.getAbsolutePath()};
+        Set<File> result = new ArgumentHandler(args).doJob();
+        assertThat(result, hasItem(dir11));
+        assertThat(result, hasItem(file11));
         assertThat(result.size(), is(2));
     }
 

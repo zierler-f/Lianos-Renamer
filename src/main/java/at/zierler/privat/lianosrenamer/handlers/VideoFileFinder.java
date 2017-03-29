@@ -6,10 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -69,7 +66,7 @@ public class VideoFileFinder implements Function {
      */
 
     @Override
-    public List<FileExt> doJob() {
+    public Set<FileExt> doJob() {
         return files
                 .parallelStream()
                 .flatMap(file -> {
@@ -85,7 +82,7 @@ public class VideoFileFinder implements Function {
                     }
                 })
                 .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     /**
