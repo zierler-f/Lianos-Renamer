@@ -3,6 +3,7 @@ package at.zierler.privat.lianosrenamer.handlers;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
  * converts array of arguments, to list of files
  */
 
-public class ArgumentHandler implements Function {
+public class ArgumentHandler implements Supplier<Set<File>> {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -37,7 +38,7 @@ public class ArgumentHandler implements Function {
      */
 
     @Override
-    public Set<File> doJob() {
+    public Set<File> get() {
         return Arrays
                 .stream(args)                   //create Stream from argument array
                 .map(File::new)                 //create File for each argument

@@ -46,7 +46,7 @@ public class VideoFileFinderTest extends FileTest {
         input.add(dir1);
         input.add(dir2);
 
-        Set<FileExt> result = new VideoFileFinder(input).doJob();
+        Set<FileExt> result = new VideoFileFinder(input).get();
 
         assertThat(result.size(), is(5));
         assertThat(result, hasItem(new FileExt(videoFile1.getAbsolutePath())));

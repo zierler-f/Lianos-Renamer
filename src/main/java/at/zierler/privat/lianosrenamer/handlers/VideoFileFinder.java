@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class VideoFileFinder implements Function {
+public class VideoFileFinder implements Supplier<Set<FileExt>> {
 
     /**
      * List of all video extensions the program knows
@@ -66,7 +67,7 @@ public class VideoFileFinder implements Function {
      */
 
     @Override
-    public Set<FileExt> doJob() {
+    public Set<FileExt> get() {
         return files
                 .parallelStream()
                 .flatMap(file -> {
