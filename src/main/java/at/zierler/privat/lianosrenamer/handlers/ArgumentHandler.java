@@ -2,17 +2,16 @@ package at.zierler.privat.lianosrenamer.handlers;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * converts array of arguments, to list of files
  */
 
-public class ArgumentHandler implements Supplier<Set<File>> {
+public class ArgumentHandler implements Supplier<Stream<File>> {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -38,12 +37,12 @@ public class ArgumentHandler implements Supplier<Set<File>> {
      */
 
     @Override
-    public Set<File> get() {
+    public Stream<File> get() {
         return Arrays
                 .stream(args)                   //create Stream from argument array
                 .map(File::new)                 //create File for each argument
                 .filter(this::argExistsAsFile)  //drop arguments which don't refer to a path on the file system
-                .collect(Collectors.toSet());   //return list
+                .distinct();                    //remove duplicates
     }
 
     /**

@@ -6,13 +6,15 @@ import at.zierler.privat.lianosrenamer.domain.FilesExt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class VideoFileFinder implements Supplier<Set<FileExt>> {
+public class VideoFileFinder implements Supplier<Stream<FileExt>> {
 
     /**
      * List of all video extensions the program knows
@@ -24,7 +26,7 @@ public class VideoFileFinder implements Supplier<Set<FileExt>> {
      * List of files/directories to search for video files in
      */
 
-    private List<File> files;
+    private Stream<File> files;
 
     /**
      * sets instance variable files to provided directories/files to search
@@ -32,8 +34,8 @@ public class VideoFileFinder implements Supplier<Set<FileExt>> {
      * @param files list of files/directories
      */
 
-    public VideoFileFinder(List<File> files) {
-        this.files = new ArrayList<>(files);
+    public VideoFileFinder(Stream<File> files) {
+        this.files = files;
     }
 
     /**
@@ -67,14 +69,13 @@ public class VideoFileFinder implements Supplier<Set<FileExt>> {
      */
 
     @Override
-    public Set<FileExt> get() {
+    public Stream<FileExt> get() {
         return files
-                .parallelStream()
                 .flatMap(file -> FilesExt.walkSafe(file.toPath())
                         .map(FileExt::new)
                         .filter(this::isVideoFile)
-                        .peek(fileExt -> logger.log(Level.INFO, "Found video file at path: " + fileExt.getAbsolutePath())))
-                .collect(Collectors.toSet());
+                        .distinct()
+                        .peek(this::logFoundVideoFile));
     }
 
     /**
@@ -86,6 +87,10 @@ public class VideoFileFinder implements Supplier<Set<FileExt>> {
 
     private boolean isVideoFile(FileExt fileExt) {
         return knownVideoExtensions.contains(fileExt.getExtension());
+    }
+
+    private void logFoundVideoFile(FileExt fileExt) {
+        logger.log(Level.INFO, "Found video file at path: " + fileExt.getAbsolutePath());
     }
 
 }

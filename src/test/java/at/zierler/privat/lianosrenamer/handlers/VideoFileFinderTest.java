@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -46,7 +47,7 @@ public class VideoFileFinderTest extends FileTest {
         input.add(dir1);
         input.add(dir2);
 
-        Set<FileExt> result = new VideoFileFinder(input).get();
+        Set<FileExt> result = new VideoFileFinder(input.stream()).get().collect(Collectors.toSet());
 
         assertThat(result.size(), is(5));
         assertThat(result, hasItem(new FileExt(videoFile1.getAbsolutePath())));
