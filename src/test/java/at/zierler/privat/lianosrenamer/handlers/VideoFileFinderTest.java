@@ -6,10 +6,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -18,8 +17,6 @@ public class VideoFileFinderTest extends FileTest {
 
     @Test
     public void testVideoFileFinder() throws IOException {
-        List<File> input = new ArrayList<>();
-
         File videoFile1 = temporaryFolder.newFile("videoFile1.mp4");
         File videoFile2 = temporaryFolder.newFile("videoFile2.mkv");
         File nonVideoFile1 = temporaryFolder.newFile("file1.txt");
@@ -40,14 +37,9 @@ public class VideoFileFinderTest extends FileTest {
         assertTrue(dir1Dir3VideoFile5.createNewFile());
         assertTrue(dir1Dir3NonVideoFile2.createNewFile());
 
-        input.add(videoFile1);
-        input.add(videoFile1);
-        input.add(videoFile2);
-        input.add(nonVideoFile1);
-        input.add(dir1);
-        input.add(dir2);
-
-        Set<FileExt> result = new VideoFileFinder(input.stream()).get().collect(Collectors.toSet());
+        Set<FileExt> result = new VideoFileFinder()
+                .apply(Stream.of(videoFile1, videoFile1, videoFile2, nonVideoFile1, dir1, dir2))
+                .collect(Collectors.toSet());
 
         assertThat(result.size(), is(5));
         assertThat(result, hasItem(new FileExt(videoFile1.getAbsolutePath())));

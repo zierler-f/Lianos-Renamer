@@ -19,7 +19,7 @@ public class ArgumentHandlerTest extends FileTest {
         File dir11 = temporaryFolder.newFolder("dir11");
         File file11 = temporaryFolder.newFile("file11.txt");
         String[] args = {dir11.getAbsolutePath(), file11.getAbsolutePath(), file11.getAbsolutePath()};
-        Set<File> result = new ArgumentHandler(args).get().collect(Collectors.toSet());
+        Set<File> result = new ArgumentHandler().apply(args).collect(Collectors.toSet());
         assertThat(result, hasItem(dir11));
         assertThat(result, hasItem(file11));
         assertThat(result.size(), is(2));
@@ -27,14 +27,14 @@ public class ArgumentHandlerTest extends FileTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testArgumentHandlerFailsNoArgs() {
-        new ArgumentHandler(new String[0]);
+        new ArgumentHandler().apply(new String[0]);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testArgumentHandlerFailsWrongArg() throws IOException {
         File file21 = temporaryFolder.newFile("file21.txt");
         String[] args = {file21.getAbsolutePath(), "/dev/null/file"};
-        List<File> result = new ArgumentHandler(args).get().collect(Collectors.toList());
+        List<File> result = new ArgumentHandler().apply(args).collect(Collectors.toList());
         assertThat(result.size(), is(1));
     }
 

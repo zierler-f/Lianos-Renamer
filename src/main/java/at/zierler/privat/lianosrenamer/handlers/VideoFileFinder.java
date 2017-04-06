@@ -9,12 +9,12 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class VideoFileFinder implements Supplier<Stream<FileExt>> {
+public class VideoFileFinder implements Function<Stream<File>, Stream<FileExt>> {
 
     /**
      * List of all video extensions the program knows
@@ -22,21 +22,6 @@ public class VideoFileFinder implements Supplier<Stream<FileExt>> {
 
     private static final List<String> knownVideoExtensions = loadKnownVideoExtensions();
     private final Logger logger = Logger.getLogger(this.getClass().getName());
-    /**
-     * List of files/directories to search for video files in
-     */
-
-    private Stream<File> files;
-
-    /**
-     * sets instance variable files to provided directories/files to search
-     *
-     * @param files list of files/directories
-     */
-
-    public VideoFileFinder(Stream<File> files) {
-        this.files = files;
-    }
 
     /**
      * loads video extensions from application.properties file and returns default video extensions if file doesn't exist
@@ -69,7 +54,7 @@ public class VideoFileFinder implements Supplier<Stream<FileExt>> {
      */
 
     @Override
-    public Stream<FileExt> get() {
+    public Stream<FileExt> apply(Stream<File> files) {
         return files
                 .flatMap(file -> FilesExt.walkSafe(file.toPath())
                         .map(FileExt::new)
