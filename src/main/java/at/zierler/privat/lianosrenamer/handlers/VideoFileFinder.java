@@ -1,11 +1,11 @@
 package at.zierler.privat.lianosrenamer.handlers;
 
 import at.zierler.privat.lianosrenamer.domain.FileExt;
+import at.zierler.privat.lianosrenamer.domain.FilesExt;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -70,19 +70,10 @@ public class VideoFileFinder implements Supplier<Set<FileExt>> {
     public Set<FileExt> get() {
         return files
                 .parallelStream()
-                .flatMap(file -> {
-                    try {
-                        return Files
-                                .walk(file.toPath())
-                                .map(FileExt::new)
-                                .filter(this::isVideoFile)
-                                .peek(fileExt -> logger.log(Level.INFO, "Found video file at path: " + fileExt.getAbsolutePath()));
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, "Error occurred while walking files.", e);
-                        throw new RuntimeException(e);
-                    }
-                })
-                .distinct()
+                .flatMap(file -> FilesExt.walkSafe(file.toPath())
+                        .map(FileExt::new)
+                        .filter(this::isVideoFile)
+                        .peek(fileExt -> logger.log(Level.INFO, "Found video file at path: " + fileExt.getAbsolutePath())))
                 .collect(Collectors.toSet());
     }
 

@@ -3,6 +3,10 @@ package at.zierler.privat.lianosrenamer.domain;
 import java.io.File;
 import java.nio.file.Path;
 
+/**
+ * Extension class for {@link File}
+ */
+
 public class FileExt extends File {
 
     private String extension;
