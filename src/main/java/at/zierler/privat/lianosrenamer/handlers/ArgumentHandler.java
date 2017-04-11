@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -14,8 +13,6 @@ import java.util.stream.Stream;
  */
 
 public class ArgumentHandler implements Function<String[], Stream<Path>> {
-
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     /**
      * goes through each provided argument and returns args pointing to an existing file on the file system as a list

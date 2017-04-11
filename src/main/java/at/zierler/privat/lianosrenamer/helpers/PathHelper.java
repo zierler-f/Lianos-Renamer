@@ -17,12 +17,16 @@ import java.util.stream.Stream;
 
 public class PathHelper {
 
-
     /**
      * List of all video extensions the program knows
      */
 
     private static final List<String> knownVideoExtensions = loadKnownVideoExtensions();
+
+
+    private PathHelper() throws IllegalAccessException {
+        throw new IllegalAccessException("PathHelper only has static members, and therefore doesn't need to be constructed.");
+    }
 
     /**
      * loads video extensions from application.properties file and returns default video extensions if file or key in file doesn't exist
@@ -31,14 +35,14 @@ public class PathHelper {
      */
 
     private static List<String> loadKnownVideoExtensions() {
-        String knownVideoExtensions = "mp4,mkv,flv,wmv,avi";
+        String defaultKnownVideoExtensions = "mp4,mkv,flv,wmv,avi";
         Properties properties = new Properties();
         try (InputStream fis = VideoFileFinder.class.getClassLoader().getResourceAsStream("application.properties")) {
             properties.load(fis);
-            knownVideoExtensions = properties.getProperty("video-extensions", knownVideoExtensions);
-        } catch (IOException | NullPointerException ignored) {
+            return Arrays.asList(properties.getProperty("video-extensions", defaultKnownVideoExtensions).split(","));
+        } catch (IOException | NullPointerException e) {
+            return Arrays.asList(defaultKnownVideoExtensions.split(","));
         }
-        return Arrays.asList(knownVideoExtensions.split(","));
 
     }
 
@@ -99,7 +103,7 @@ public class PathHelper {
 
     public static String getExtension(Path path) {
         String extensionPlain = getExtensionPlain(path);
-        return extensionPlain == null || extensionPlain.equals("") ? extensionPlain : "." + extensionPlain;
+        return extensionPlain == null || "".equals(extensionPlain) ? extensionPlain : "." + extensionPlain;
     }
 
 
