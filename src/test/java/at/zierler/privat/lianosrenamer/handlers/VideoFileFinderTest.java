@@ -1,11 +1,12 @@
 package at.zierler.privat.lianosrenamer.handlers;
 
 import at.zierler.privat.lianosrenamer.FileTest;
-import at.zierler.privat.lianosrenamer.domain.FileExt;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,38 +16,32 @@ import static org.hamcrest.Matchers.is;
 
 public class VideoFileFinderTest extends FileTest {
 
+
     @Test
     public void testVideoFileFinder() throws IOException {
-        File videoFile1 = temporaryFolder.newFile("videoFile1.mp4");
-        File videoFile2 = temporaryFolder.newFile("videoFile2.mkv");
-        File nonVideoFile1 = temporaryFolder.newFile("file1.txt");
-        File dir1 = temporaryFolder.newFolder("dir1");
-        File dir2 = temporaryFolder.newFolder("dir2");
+        Path videoFile1 = Files.createFile(Paths.get(testFolder, "videoFile1.mp4"));
+        Path videoFile2 = Files.createFile(Paths.get(testFolder, "videoFile2.mkv"));
+        Path nonVideoFile1 = Files.createFile(Paths.get(testFolder, "file1.txt"));
+        Path dir1 = Files.createDirectory(Paths.get(testFolder, "dir1"));
+        Path dir2 = Files.createDirectory(Paths.get(testFolder, "dir2"));
 
-        File dir1VideoFile3 = new File(dir1, "videoFile3.flv");
-        File dir1Dir3 = new File(dir1, "dir3");
-        File dir2VideoFile4 = new File(dir2, "videoFile4.avi");
+        Path dir1VideoFile3 = Files.createFile(Paths.get(dir1.toString(), "videoFile3.flv"));
+        Path dir1dir3 = Files.createDirectory(Paths.get(dir1.toString(), "dir3"));
+        Path dir2VideoFile4 = Files.createFile(Paths.get(dir1.toString(), "videoFile1.avi"));
 
-        assertTrue(dir1VideoFile3.createNewFile());
-        assertTrue(dir1Dir3.mkdir());
-        assertTrue(dir2VideoFile4.createNewFile());
+        Path dir1Dir3VideoFile5 = Files.createFile(Paths.get(dir1dir3.toString(), "videoFile5.wmv"));
+        Files.createFile(Paths.get(dir1dir3.toString(), "file2.mp3"));
 
-        File dir1Dir3VideoFile5 = new File(dir1Dir3, "videoFile5.wmv");
-        File dir1Dir3NonVideoFile2 = new File(dir1Dir3, "file2.mp3");
-
-        assertTrue(dir1Dir3VideoFile5.createNewFile());
-        assertTrue(dir1Dir3NonVideoFile2.createNewFile());
-
-        Set<FileExt> result = new VideoFileFinder()
+        Set<Path> result = new VideoFileFinder()
                 .apply(Stream.of(videoFile1, videoFile1, videoFile2, nonVideoFile1, dir1, dir2))
                 .collect(Collectors.toSet());
 
         assertThat(result.size(), is(5));
-        assertThat(result, hasItem(new FileExt(videoFile1.getAbsolutePath())));
-        assertThat(result, hasItem(new FileExt(videoFile2.getAbsolutePath())));
-        assertThat(result, hasItem(new FileExt(dir1VideoFile3.getAbsolutePath())));
-        assertThat(result, hasItem(new FileExt(dir2VideoFile4.getAbsolutePath())));
-        assertThat(result, hasItem(new FileExt(dir1Dir3VideoFile5.getAbsolutePath())));
+        assertThat(result, hasItem(videoFile1));
+        assertThat(result, hasItem(videoFile2));
+        assertThat(result, hasItem(dir1VideoFile3));
+        assertThat(result, hasItem(dir2VideoFile4));
+        assertThat(result, hasItem(dir1Dir3VideoFile5));
     }
 
 }

@@ -3,8 +3,10 @@ package at.zierler.privat.lianosrenamer.handlers;
 import at.zierler.privat.lianosrenamer.FileTest;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,10 +18,10 @@ public class ArgumentHandlerTest extends FileTest {
 
     @Test
     public void testArgumentHandler() throws IOException {
-        File dir11 = temporaryFolder.newFolder("dir11");
-        File file11 = temporaryFolder.newFile("file11.txt");
-        String[] args = {dir11.getAbsolutePath(), file11.getAbsolutePath(), file11.getAbsolutePath()};
-        Set<File> result = new ArgumentHandler().apply(args).collect(Collectors.toSet());
+        Path dir11 = Files.createDirectory(Paths.get(testFolder, "dir11"));
+        Path file11 = Files.createFile(Paths.get(testFolder, "file11"));
+        String[] args = {dir11.toString(), file11.toString(), file11.toString()};
+        Set<Path> result = new ArgumentHandler().apply(args).collect(Collectors.toSet());
         assertThat(result, hasItem(dir11));
         assertThat(result, hasItem(file11));
         assertThat(result.size(), is(2));
@@ -32,9 +34,9 @@ public class ArgumentHandlerTest extends FileTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testArgumentHandlerFailsWrongArg() throws IOException {
-        File file21 = temporaryFolder.newFile("file21.txt");
-        String[] args = {file21.getAbsolutePath(), "/dev/null/file"};
-        List<File> result = new ArgumentHandler().apply(args).collect(Collectors.toList());
+        Path file21 = Files.createFile(Paths.get(testFolder, "file21"));
+        String[] args = {file21.toString(), "/dev/null/file"};
+        List<Path> result = new ArgumentHandler().apply(args).collect(Collectors.toList());
         assertThat(result.size(), is(1));
     }
 
