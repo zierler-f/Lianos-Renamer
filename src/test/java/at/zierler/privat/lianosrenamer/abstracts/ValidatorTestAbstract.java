@@ -1,6 +1,6 @@
-package at.zierler.privat.lianosrenamer;
+package at.zierler.privat.lianosrenamer.abstracts;
 
-import at.zierler.privat.lianosrenamer.service.Validator;
+import at.zierler.privat.lianosrenamer.service.abstracts.Validator;
 import org.junit.Assert;
 
 public abstract class ValidatorTestAbstract<T extends Validator> extends Assert implements ValidatorTest<T> {

@@ -1,4 +1,6 @@
-package at.zierler.privat.lianosrenamer.service;
+package at.zierler.privat.lianosrenamer.service.arguments;
+
+import at.zierler.privat.lianosrenamer.service.abstracts.Validator;
 
 import java.util.stream.Stream;
 
@@ -6,7 +8,7 @@ import java.util.stream.Stream;
  * Validates all arguments passed to the program as a String array
  */
 
-public class ArgumentArrayValidator implements Validator<String[]> {
+class ArgumentArrayValidator implements Validator<String[]> {
 
     @Override
     public boolean isValid(String[] args) {

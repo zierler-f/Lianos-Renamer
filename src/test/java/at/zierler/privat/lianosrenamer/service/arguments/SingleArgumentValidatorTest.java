@@ -1,6 +1,7 @@
-package at.zierler.privat.lianosrenamer.service;
+package at.zierler.privat.lianosrenamer.service.arguments;
 
-import at.zierler.privat.lianosrenamer.ValidatorTestAbstract;
+import at.zierler.privat.lianosrenamer.abstracts.ValidatorTestAbstract;
+import at.zierler.privat.lianosrenamer.service.arguments.SingleArgumentValidator;
 import org.junit.Test;
 
 public class SingleArgumentValidatorTest extends ValidatorTestAbstract<SingleArgumentValidator> {

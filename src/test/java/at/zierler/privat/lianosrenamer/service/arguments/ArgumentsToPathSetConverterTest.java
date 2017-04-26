@@ -1,6 +1,7 @@
-package at.zierler.privat.lianosrenamer.service;
+package at.zierler.privat.lianosrenamer.service.arguments;
 
-import at.zierler.privat.lianosrenamer.BaseTest;
+import at.zierler.privat.lianosrenamer.abstracts.BaseTest;
+import at.zierler.privat.lianosrenamer.service.arguments.ArgumentsToPathSetConverter;
 import org.junit.Before;
 import org.junit.Test;
 

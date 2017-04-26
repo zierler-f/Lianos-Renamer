@@ -1,4 +1,4 @@
-package at.zierler.privat.lianosrenamer.service;
+package at.zierler.privat.lianosrenamer.service.abstracts;
 
 public interface Validator<T> {
 

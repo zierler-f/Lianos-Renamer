@@ -1,4 +1,4 @@
-package at.zierler.privat.lianosrenamer;
+package at.zierler.privat.lianosrenamer.abstracts;
 
 import org.junit.rules.TemporaryFolder;
 

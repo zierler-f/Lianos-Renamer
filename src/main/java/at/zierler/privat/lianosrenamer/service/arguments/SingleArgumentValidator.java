@@ -1,10 +1,12 @@
-package at.zierler.privat.lianosrenamer.service;
+package at.zierler.privat.lianosrenamer.service.arguments;
+
+import at.zierler.privat.lianosrenamer.service.abstracts.Validator;
 
 /**
  * checks if a single argument (passed as a String) is valid
  */
 
-public class SingleArgumentValidator implements Validator<String> {
+class SingleArgumentValidator implements Validator<String> {
 
     @Override
     public boolean isValid(String arg) {
